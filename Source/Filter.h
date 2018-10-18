@@ -180,7 +180,7 @@ public:
     
     ptr(0),
     ptr2(0),
-    mSampleRate(44100.0),
+    //mSampleRate(44100.0),
     
     Q1(0.65000000000000002),
     fcLP(4100.0),

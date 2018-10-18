@@ -29,10 +29,10 @@ static double bufferRight[len];
 static double bufferLeft_Ref[len_ref];
 static double bufferRight_Ref[len_ref];
 
-static double bufferLeft_copy[len];
-static double bufferRight_copy[len];
-static double *rptrLeft_copy = bufferLeft_copy;
-static double *rptrRight_copy = bufferRight_copy;
+//static double bufferLeft_copy[len];
+//static double bufferRight_copy[len];
+//static double *rptrLeft_copy = bufferLeft_copy;
+//static double *rptrRight_copy = bufferRight_copy;
 
 static double *rptrLeft = bufferLeft; // read ptr
 static double *wptrLeft = bufferLeft; // write ptr
@@ -60,9 +60,9 @@ public:
     fracDelaySamplesRight(0.0),
     fracDelaySamplesLeft_Ref(0.0),
     fracDelaySamplesRight_Ref(0.0),
-    crossfadeNeededL(false),
-    crossfadeNeededR(false),
-    t_L(-1),
+    //crossfadeNeededL(false),
+    //crossfadeNeededR(false),
+    //t_L(-1),
     t_R(-1){};
     ~DelayLine(){};
     

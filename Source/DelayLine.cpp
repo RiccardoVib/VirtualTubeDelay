@@ -79,7 +79,20 @@ double DelayLine::delayLineL(double x)
     double *rpi = (rptrLeft+1);
     if (rpi - bufferLeft >= len) { rpi -= len; }
     
-    y = sqrt(0.5f * (1.0f + t_L)) * (1 - fracDelaySamplesLeft) * *rptrLeft + fracDelaySamplesLeft * *(rpi) - y_1_L * (1 - fracDelaySamplesLeft);
+    /*double *z1 = (rptrLeft-1);
+    double *z2 = (rptrLeft-2);
+    if(z1 < bufferLeft) { z1 += len; }
+    if(z2 < bufferLeft) { z2 += len; }
+    
+    double a = pow(fracDelaySamplesLeft,3)/6;
+    double a0 = (pow(1 + fracDelaySamplesLeft, 3) - 4*pow(fracDelaySamplesLeft,3))/6;
+    double a1 = (pow(2 - fracDelaySamplesLeft, 3) - 4*pow(1 - fracDelaySamplesLeft, 3))/6;
+    double a2 = pow(1 - fracDelaySamplesLeft,3)/6;*/
+    
+    //y = sqrt(0.5f * (1.0f + t_L)) * (1 - fracDelaySamplesLeft) * *rptrLeft + fracDelaySamplesLeft * *(rpi) - y_1_L * (1 - fracDelaySamplesLeft);
+    y = (1 - fracDelaySamplesLeft) * *rptrLeft + fracDelaySamplesLeft * *(rpi) - y_1_L * (1 - fracDelaySamplesLeft);
+
+    //y = *rpi * a + *rptrLeft * a0 + *z1 * a1 + *z2 * a2;
     
     y_1_L = y;
     rptrLeft += 1;

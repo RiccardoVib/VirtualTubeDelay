@@ -14,10 +14,12 @@
 
 //==============================================================================
 VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (VirtualTubeDelayAudioProcessor& p)
-    : AudioProcessorEditor (&p), processor (p), tubeLengthLeftLabel_("", "Tube Length Left (m):"),
-      tubeLengthRightLabel_("", "Tube Length Right (m):"),
-      gainLeftLabel_("", "Gain Left Level:"),
-      gainRightLabel_("", "Gain Right Level:"), tubeSizeLabel_("", "Tube Size (cm):"), dryWetMixLabel_("", "Dry/Wet Mix Level:")
+    : AudioProcessorEditor (&p), processor (p),
+        tubeLengthLeftLabel_("", "Tube Length Left (m):"), tubeLengthRightLabel_("", "Tube Length Right (m):"),
+        gainLeftLabel_("", "Gain Left Level:"), gainRightLabel_("", "Gain Right Level:"),
+        tubeSizeLabel_("", "Tube Size (cm):"), dryWetMixLabel_("", "Dry/Wet Mix Level:"), enabledReflectionLabel_("", "Add Reflection:"),
+        tubeLengthRefLeftLabel_("", "Tube End Distance Left (m):"), tubeLengthRefRightLabel_("", "Tube End Distance Right (m):"),
+        gainRefLeftLabel_("", "Gain Reflection Left Level:"), gainRefRightLabel_("", "Gain Reflection Right Level:")
 {
    
     setSize (800, 350);
@@ -27,10 +29,11 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     tubeLengthLeftSlider_.setSliderStyle(Slider::LinearBar);
     tubeLengthLeftSlider_.setRange (2.0, 30.0, 0.01);
     tubeLengthLeftSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
-    tubeLengthLeftSlider_.setPopupDisplayEnabled (true, false, this);
+    tubeLengthLeftSlider_.setPopupDisplayEnabled(true, false, this);
     tubeLengthLeftSlider_.setTextValueSuffix(" Tube Length Left");
     tubeLengthLeftSlider_.setValue(10.0);
     tubeLengthLeftSlider_.setDoubleClickReturnValue(true, 10.0);
+    tubeLengthLeftSlider_.setChangeNotificationOnlyOnRelease(true);
     addAndMakeVisible (&tubeLengthLeftSlider_);
     tubeLengthLeftSlider_.addListener(this);
     
@@ -41,6 +44,7 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     tubeLengthRightSlider_.setTextValueSuffix(" Tube Length Right");
     tubeLengthRightSlider_.setValue(10.0);
     tubeLengthRightSlider_.setDoubleClickReturnValue(true, 10.0);
+    tubeLengthRightSlider_.setChangeNotificationOnlyOnRelease(true);
     addAndMakeVisible (&tubeLengthRightSlider_);
     tubeLengthRightSlider_.addListener(this);
     
@@ -84,6 +88,56 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     addAndMakeVisible (&dryWetMixSlider_);
     dryWetMixSlider_.addListener(this);
     
+    enabledReflectionToggleButton_.setButtonText("Off");
+    //enabledReflectionToggleButton_.changeWidthToFitText();
+    enabledReflectionToggleButton_.setClickingTogglesState(true);
+    //enabledReflectionToggleButton_.setJustificationType (Justification::centred);
+    enabledReflectionToggleButton_.setClickingTogglesState(true);
+    addAndMakeVisible (&enabledReflectionToggleButton_);
+    enabledReflectionToggleButton_.addListener(this);
+    
+    tubeLengthRefLeftSlider_.setSliderStyle(Slider::LinearBar);
+    tubeLengthRefLeftSlider_.setRange (1.0, 5.0, 0.01);
+    tubeLengthRefLeftSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
+    tubeLengthRefLeftSlider_.setPopupDisplayEnabled(true, false, this);
+    tubeLengthRefLeftSlider_.setTextValueSuffix(" Tube End Distance Left");
+    tubeLengthRefLeftSlider_.setValue(1.0);
+    tubeLengthRefLeftSlider_.setDoubleClickReturnValue(true, 10.0);
+    tubeLengthRefLeftSlider_.setChangeNotificationOnlyOnRelease(true);
+    addAndMakeVisible (&tubeLengthRefLeftSlider_);
+    tubeLengthRefLeftSlider_.addListener(this);
+    
+    tubeLengthRefRightSlider_.setSliderStyle(Slider::LinearBar);
+    tubeLengthRefRightSlider_.setRange (1.0, 5.0, 0.01);
+    tubeLengthRefRightSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
+    tubeLengthRefRightSlider_.setPopupDisplayEnabled (true, false, this);
+    tubeLengthRefRightSlider_.setTextValueSuffix(" Tube End Distance Right");
+    tubeLengthRefRightSlider_.setValue(1.0);
+    tubeLengthRefRightSlider_.setDoubleClickReturnValue(true, 10.0);
+    tubeLengthRefRightSlider_.setChangeNotificationOnlyOnRelease(true);
+    addAndMakeVisible (&tubeLengthRefRightSlider_);
+    tubeLengthRightSlider_.addListener(this);
+    
+    gainRefLeftSlider_.setSliderStyle(Slider::Rotary);
+    gainRefLeftSlider_.setRange (0.0, 20.0, 0.01);
+    gainRefLeftSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
+    gainRefLeftSlider_.setPopupDisplayEnabled (true, false, this);
+    gainRefLeftSlider_.setTextValueSuffix(" Gain Reflection Left");
+    gainRefLeftSlider_.setValue(0.0);
+    gainRefLeftSlider_.setDoubleClickReturnValue(true, 0.0);
+    addAndMakeVisible (&gainRefLeftSlider_);
+    gainRefLeftSlider_.addListener(this);
+    
+    gainRefRightSlider_.setSliderStyle(Slider::Rotary);
+    gainRefRightSlider_.setRange (0.0, 20.0, 0.01);
+    gainRefRightSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
+    gainRefRightSlider_.setPopupDisplayEnabled (true, false, this);
+    gainRefRightSlider_.setTextValueSuffix(" Gain Reflection Right");
+    gainRefRightSlider_.setValue(0.0);
+    gainRefRightSlider_.setDoubleClickReturnValue(true, 0.0);
+    addAndMakeVisible (&gainRefRightSlider_);
+    gainRefRightSlider_.addListener(this);
+    
     tubeLengthLeftLabel_.attachToComponent(&tubeLengthLeftSlider_, false);
     tubeLengthLeftLabel_.setFont(Font (11.0f));
     tubeLengthRightLabel_.attachToComponent(&tubeLengthRightSlider_, false);
@@ -100,10 +154,35 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     dryWetMixLabel_.attachToComponent(&dryWetMixSlider_, false);
     dryWetMixLabel_.setFont(Font (11.0f));
  
+    
+    enabledReflectionLabel_.attachToComponent(&enabledReflectionToggleButton_, false);
+    enabledReflectionLabel_.setFont(Font (11.0f));
+    
+    tubeLengthRefLeftLabel_.attachToComponent(&tubeLengthRefLeftSlider_, false);
+    tubeLengthRefLeftLabel_.setFont(Font (11.0f));
+    tubeLengthRefRightLabel_.attachToComponent(&tubeLengthRefRightSlider_, false);
+    tubeLengthRefRightLabel_.setFont(Font (11.0f));
+    gainRefLeftLabel_.attachToComponent(&gainRefLeftSlider_, false);
+    gainRefLeftLabel_.setFont(Font (11.0f));
+    gainRefRightLabel_.attachToComponent(&gainRefRightSlider_, false);
+    gainRefRightLabel_.setFont(Font (11.0f));
+    //gainLeftLabel_.setColour(1, Colours::black);
+    gainRefRightLabel_.attachToComponent(&gainRefRightSlider_, false);
+    gainRefRightLabel_.setFont(Font (11.0f));
 }
 
 VirtualTubeDelayAudioProcessorEditor::~VirtualTubeDelayAudioProcessorEditor()
 {
+}
+
+void VirtualTubeDelayAudioProcessorEditor::buttonClicked (Button* button)
+{
+    processor.enabledReflection_ = enabledReflectionToggleButton_.getState();
+    if(processor.enabledReflection_){
+        enabledReflectionToggleButton_.setButtonText("Off");
+    }else{
+        enabledReflectionToggleButton_.setButtonText("On");
+    }
 }
 
 void VirtualTubeDelayAudioProcessorEditor::sliderValueChanged (Slider* slider)
@@ -153,7 +232,42 @@ void VirtualTubeDelayAudioProcessorEditor::sliderValueChanged (Slider* slider)
         processor.mFilter.setValues(processor.tubeLengthRight_, processor.rad);
         processor.mFilter.getCalculatedCoefficients(1);
     }
+    else if (slider == &tubeLengthRefLeftSlider_)
+    {
+        processor.tubeLengthRefLeft_ = tubeLengthRefLeftSlider_.getValue();
+        
+        processor.lengRef_L = processor.leng_L + processor.mFilter.setLengt(2*processor.tubeLengthRefLeft_);
+        processor.delayMilliRef_L = processor.mFilter.setDelayMilliseconds(processor.lengRef_L);
+        processor.delaySamplesRef_L = processor.mFilter.setDelaySamples(processor.delayMilliRef_L);
+        processor.mDelayLine.setDelay_Ref_L(processor.delaySamplesRef_L);
+        processor.mFilter.setValues(2*processor.tubeLengthRefLeft_, processor.rad);
+        processor.mFilter.getCalculatedCoefficients_Ref(0);
+
+        
+    }
+    else if (slider == &tubeLengthRefRightSlider_)
+    {
+        processor.tubeLengthRefRight_ = tubeLengthRefRightSlider_.getValue();
+        
+        processor.lengRef_R = processor.leng_L + processor.mFilter.setLengt(2*processor.tubeLengthRefRight_);
+        processor.delayMilliRef_R = processor.mFilter.setDelayMilliseconds(processor.lengRef_R);
+        processor.delaySamplesRef_R = processor.mFilter.setDelaySamples(processor.delayMilliRef_R);
+        processor.mDelayLine.setDelay_Ref_R(processor.delaySamplesRef_R);
+        processor.mFilter.setValues(2*processor.tubeLengthRefRight_, processor.rad);
+        processor.mFilter.getCalculatedCoefficients_Ref(1);
+    }
+    else if (slider == &gainRefLeftSlider_)
+    {
+        processor.gainRefLeft_ = gainRefLeftSlider_.getValue();
+    }
+    else if (slider == &gainRefRightSlider_)
+    {
+        processor.gainRefLeft_ = gainRefRightSlider_.getValue();
+    }
 }
+
+
+
 //==============================================================================
 void VirtualTubeDelayAudioProcessorEditor::paint (Graphics& g)
 {
@@ -178,4 +292,14 @@ void VirtualTubeDelayAudioProcessorEditor::resized()
     dryWetMixSlider_.setBounds (700, 250, 80, 80);
     
     tubeSizeSlider_.setBounds (700, 150, 80, 80);
+    
+    enabledReflectionToggleButton_.setBounds (600, 250, 80, 80);
+    
+    tubeLengthRefLeftSlider_.setBounds (30, 200, getWidth()-700, 20);
+    
+    tubeLengthRefRightSlider_.setBounds (getWidth()-500, 200, getWidth()-700, 20);
+    
+    gainRefLeftSlider_.setBounds (30, 250, 80, 80);
+    
+    gainRefRightSlider_.setBounds (130, 250, 80, 80);
 }

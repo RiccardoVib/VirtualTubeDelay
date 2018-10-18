@@ -24,21 +24,20 @@ VirtualTubeDelayAudioProcessor::VirtualTubeDelayAudioProcessor()
     gainRight_ = 0.0;
     dryWetMix_ = 0.0;
     tubeSize_ = 1.2;
-    //delayBufferLength_ = 1;
-    //delayReadPosition_ = 0;
-    //delayWritePosition_ = 0;
+    enabledReflection_ = false;
     
-    
-    /*enum Parameters
-    {
-        ktubeLengthLeft = 0,
-        ktubeLengthRight,
-        kgainLeft,
-        kgainRight,
-        kdryWetMix,
-        ktubeSize,
-        kNumParameters
-    };*/
+    leng_L = 10.0;
+    leng_R = 10.0;
+    delayMilli_L = 28.985507246376812;
+    delayMilli_R = 28.985507246376812;
+    delaySamples_L = 1278.2608695652175;
+    delaySamples_R = 1278.2608695652175;
+    lengRef_L = 12.0;
+    lengRef_R = 12.0;
+    delayMilliRef_L = 34.78260869565217;
+    delayMilliRef_R = 34.78260869565217;
+    delaySamplesRef_L = 1533.913043478260;
+    delaySamplesRef_R = 1533.913043478260;
     
     //addParameter (tubeLengthLeft_ = new AudioParameterFloat ("tubeLengthLeft_", "TubeLength Left", 1.0f, 30.0f, 10.0f));
     //addParameter (gainLeft_     = new AudioParameterFloat ("gainLeft_",     "Gain Left",     0.0f, 10.0f, 5.0f));
@@ -197,7 +196,10 @@ void VirtualTubeDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, M
         
         //dpr = delayReadPosition_;
         //dpw = delayWritePosition_;
+  
+    if (!enabledReflection_) {
         
+    
         for (int i = 0; i < numSamples; ++i)
         {
             const float inL = channelDataL[i];
@@ -229,12 +231,66 @@ void VirtualTubeDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, M
             
             channelDataL[i] = outL;
             channelDataR[i] = outR;
+            
         }
-
-        for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+    }else{
+        
+        for (int i = 0; i < numSamples; ++i)
         {
-            buffer.clear(i, 0, buffer.getNumSamples());
+        
+            const float inL = channelDataL[i];
+            const float inR = channelDataR[i];
+            float outL = 0.0;
+            float outR = 0.0;
+  
+            mFilter.process();
+        
+            bufIn_L[mFilter.i_0] = inL;
+        
+            bufIn_R[mFilter.i_0] = inR;
+        
+            bufOut_L[mFilter.i_0] = bufIn_L[mFilter.i_0] * mFilter.b0f_L + bufIn_L[mFilter.i_1] * mFilter.b1f_L + bufIn_L[mFilter.i_2] * mFilter.b2f_L + bufIn_L[mFilter.i_3] * mFilter.b3f_L + bufIn_L[mFilter.i_4] * mFilter.b4f_L + bufIn_L[mFilter.i_5] * mFilter.b5f_L + bufIn_L[mFilter.i_6] * mFilter.b6f_L - bufOut_L[mFilter.i_1] * mFilter.a1f_L - bufOut_L[mFilter.i_2] * mFilter.a2f_L - bufOut_L[mFilter.i_3] * mFilter.a3f_L - bufOut_L[mFilter.i_4] * mFilter.a4f_L - bufOut_L[mFilter.i_5] * mFilter.a5f_L - bufOut_L[mFilter.i_6] * mFilter.a6f_L;
+        
+            bufOut_R[mFilter.i_0] = bufIn_R[mFilter.i_0] * mFilter.b0f_R + bufIn_R[mFilter.i_1] * mFilter.b1f_R + bufIn_R[mFilter.i_2] * mFilter.b2f_R + bufIn_R[mFilter.i_3] * mFilter.b3f_R + bufIn_R[mFilter.i_4] * mFilter.b4f_R + bufIn_R[mFilter.i_5] * mFilter.b5f_R + bufIn_R[mFilter.i_6] * mFilter.b6f_R - bufOut_R[mFilter.i_1] * mFilter.a1f_R - bufOut_R[mFilter.i_2] * mFilter.a2f_R - bufOut_R[mFilter.i_3] * mFilter.a3f_R - bufOut_R[mFilter.i_4] * mFilter.a4f_R - bufOut_R[mFilter.i_5] * mFilter.a5f_R - bufOut_R[mFilter.i_6] * mFilter.a6f_R;
+        
+            bufIn_Ref_L[mFilter.i_0] = bufOut_L[mFilter.i_0];
+            bufIn_Ref_R[mFilter.i_0] = bufOut_R[mFilter.i_0];
+            
+            bufOut_Ref_L[mFilter.i_0] = bufIn_Ref_L[mFilter.i_0] * mFilter.b0f_Ref_L + bufIn_Ref_L[mFilter.i_1] * mFilter.b1f_Ref_L + bufIn_Ref_L[mFilter.i_2] * mFilter.b2f_Ref_L + bufIn_Ref_L[mFilter.i_3] * mFilter.b3f_Ref_L + bufIn_Ref_L[mFilter.i_4] * mFilter.b4f_Ref_L + bufIn_Ref_L[mFilter.i_5] * mFilter.b5f_Ref_L + bufIn_Ref_L[mFilter.i_6] * mFilter.b6f_Ref_L - bufOut_Ref_L[mFilter.i_1] * mFilter.a1f_Ref_L - bufOut_Ref_L[mFilter.i_2] * mFilter.a2f_Ref_L - bufOut_Ref_L[mFilter.i_3] * mFilter.a3f_Ref_L - bufOut_Ref_L[mFilter.i_4] * mFilter.a4f_Ref_L - bufOut_Ref_L[mFilter.i_5] * mFilter.a5f_Ref_L - bufOut_Ref_L[mFilter.i_6] * mFilter.a6f_Ref_L;
+        
+            bufOut_Ref_R[mFilter.i_0] = bufIn_Ref_R[mFilter.i_0] * mFilter.b0f_Ref_R + bufIn_Ref_R[mFilter.i_1] * mFilter.b1f_Ref_R + bufIn_Ref_R[mFilter.i_2] * mFilter.b2f_Ref_R + bufIn_Ref_R[mFilter.i_3] * mFilter.b3f_Ref_R + bufIn_Ref_R[mFilter.i_4] * mFilter.b4f_Ref_R + bufIn_Ref_R[mFilter.i_5] * mFilter.b5f_Ref_R + bufIn_Ref_R[mFilter.i_6] * mFilter.b6f_Ref_R - bufOut_Ref_R[mFilter.i_1] * mFilter.a1f_Ref_R - bufOut_Ref_R[mFilter.i_2] * mFilter.a2f_Ref_R - bufOut_Ref_R[mFilter.i_3] * mFilter.a3f_Ref_R - bufOut_Ref_R[mFilter.i_4] * mFilter.a4f_Ref_R - bufOut_Ref_R[mFilter.i_5] * mFilter.a5f_Ref_R - bufOut_Ref_R[mFilter.i_6] * mFilter.a6f_Ref_R;
+        
+            bufIn_Fin_L[mFilter.j_0] = bufOut_L[mFilter.i_0];
+            bufIn_Fin_R[mFilter.j_0] = bufOut_R[mFilter.i_0];
+        
+        
+            bufOut_Fin_L[mFilter.j_0] = bufIn_Fin_L[mFilter.j_0] * mFilter.b_Ref[rad][0] + bufIn_Fin_L[mFilter.j_1] * mFilter.b_Ref[rad][1] + bufIn_Fin_L[mFilter.j_2] * mFilter.b_Ref[rad][2] + bufIn_Fin_L[mFilter.j_3] * mFilter.b_Ref[rad][3] - bufOut_Fin_L[mFilter.j_1] * mFilter.a_Ref[rad][0] - bufOut_Fin_L[mFilter.j_2] * mFilter.a_Ref[rad][1] - bufOut_Fin_L[mFilter.j_3] * mFilter.a_Ref[rad][2];
+        
+            bufOut_Fin_R[mFilter.j_0] = bufIn_Fin_R[mFilter.j_0] * mFilter.b_Ref[rad][0] + bufIn_Fin_R[mFilter.j_1] * mFilter.b_Ref[rad][1] + bufIn_Fin_R[mFilter.j_2] * mFilter.b_Ref[rad][2] + bufIn_Fin_R[mFilter.j_3] * mFilter.b_Ref[rad][3] - bufOut_Fin_R[mFilter.j_1] * mFilter.a_Ref[rad][0] - bufOut_Fin_R[mFilter.j_2] * mFilter.a_Ref[rad][1] - bufOut_Fin_R[mFilter.j_3] * mFilter.a_Ref[rad][2];
+        
+            if (dryWetMix_ == 0) {
+                
+                outL = inL;
+                outR = inR;
+                
+            }else{
+    
+                outL = inL * (1.0 - dryWetMix_) + dryWetMix_ * (gainLeft_ * mDelayLine.delayLineL(bufOut_L[mFilter.i_0]) + gainRefLeft_ * mDelayLine.delayLine_Ref_L(bufOut_Fin_L[mFilter.j_0]));
+        
+            outR = inR * (1.0 - dryWetMix_) + dryWetMix_ * (gainRight_ * mDelayLine.delayLineR(bufOut_R[mFilter.i_0]) + gainRefRight_ * mDelayLine.delayLine_Ref_R(bufOut_Fin_R[mFilter.j_0]));
+        
+            }
+            
+            channelDataL[i] = outL;
+            channelDataR[i] = outR;
         }
+    }
+
+
+    for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+    {
+        buffer.clear(i, 0, buffer.getNumSamples());
+    }
 }
 
 //==============================================================================
