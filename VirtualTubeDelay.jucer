@@ -5,8 +5,8 @@
               pluginName="VirtualTubeDelayJUCE">
   <MAINGROUP id="XoSo4V" name="VirtualTubeDelay">
     <GROUP id="{6B21D8EB-2C06-1F60-2E7A-7EA2C9762509}" name="Source">
-      <FILE id="tP5Rn7" name="DelayLine.h" compile="0" resource="0" file="Source/DelayLine.h"/>
-      <FILE id="PRZ54r" name="DelayLine.cpp" compile="1" resource="0" file="Source/DelayLine.cpp"/>
+      <FILE id="Vpf8v0" name="DelayLine.cpp" compile="1" resource="0" file="Source/DelayLine.cpp"/>
+      <FILE id="apJ929" name="DelayLine.h" compile="0" resource="0" file="Source/DelayLine.h"/>
       <FILE id="J4KdjO" name="Filter.cpp" compile="1" resource="0" file="Source/Filter.cpp"/>
       <FILE id="EEuXlh" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>
       <FILE id="KxH4wP" name="PluginProcessor.cpp" compile="1" resource="0"

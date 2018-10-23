@@ -84,6 +84,7 @@ public:
     float tubeSize_; // Size of the tube (1.2-2.5 cm)
     
     bool enabledReflection_;
+    bool enabledVibrato_;
     
     float tubeLengthRefLeft_; // Tube length in m
     float tubeLengthRefRight_;
@@ -112,11 +113,12 @@ public:
     DelayLine mDelayLine;
     
 private:
-
-    // Circular buffer variables for implementing delay
-    AudioBuffer<double> delayBuffer_;
+    
     int delayBufferLength_;
-    int delayReadPosition_, delayWritePosition_;
+    int delayBufferLengthRef_;
+    
+     // Circular buffer variables for implementing delay
+    AudioBuffer<float> delayBufferLeft_2, delayBufferRight_2, delayBufferLeftRef_2, delayBufferRightRef_2;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VirtualTubeDelayAudioProcessor)

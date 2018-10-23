@@ -20,31 +20,34 @@
 #define DelayLine_hpp
 #include <math.h>
 #include <tgmath.h>
+#include <vector>
 
-const int len = (int)(31/0.345)*44.1;
-const int len_ref = (int)(46/0.345)*44.1;
-static double bufferLeft[len];
-static double bufferRight[len];
+const int delayBufferLength_ = (int)(31/0.345)*44.1 + 1;
+const int delayBufferLengthRef_ = (int)(41/0.345)*44.1 + 1;
 
-static double bufferLeft_Ref[len_ref];
-static double bufferRight_Ref[len_ref];
+static double delayBufferLeft_[delayBufferLength_];
+static double delayBufferRight_[delayBufferLength_];
 
-//static double bufferLeft_copy[len];
-//static double bufferRight_copy[len];
-//static double *rptrLeft_copy = bufferLeft_copy;
-//static double *rptrRight_copy = bufferRight_copy;
+static double delayBufferLeftRef_[delayBufferLengthRef_];
+static double delayBufferRightRef_[delayBufferLengthRef_];
 
-static double *rptrLeft = bufferLeft; // read ptr
-static double *wptrLeft = bufferLeft; // write ptr
+/*static double delayBufferLeft_copy[len];
+static double delayBufferRight_copy[len];
 
-static double *rptrRight = bufferRight; // read ptr
-static double *wptrRight = bufferRight; // write ptr
+static double *rptrLeft_copy = bufferLeft_copy;
+static double *rptrRight_copy = bufferRight_copy;*/
 
-static double *rptrLeft_Ref = bufferLeft_Ref;
-static double *rptrRight_Ref = bufferRight_Ref;
+static double *rptrLeft = delayBufferLeft_; // read ptr
+static double *wptrLeft = delayBufferLeft_; // write ptr
 
-static double *wptrLeft_Ref = bufferLeft_Ref;
-static double *wptrRight_Ref = bufferRight_Ref;
+static double *rptrRight = delayBufferRight_; // read ptr
+static double *wptrRight = delayBufferRightRef_; // write ptr
+
+static double *rptrLeft_Ref = delayBufferLeftRef_;
+static double *rptrRight_Ref = delayBufferRightRef_;
+
+static double *wptrLeft_Ref = delayBufferLeftRef_;
+static double *wptrRight_Ref = delayBufferRightRef_;
 
 static double alpha = 1/2048;
 
@@ -59,13 +62,13 @@ public:
     fracDelaySamplesLeft(0.0),
     fracDelaySamplesRight(0.0),
     fracDelaySamplesLeft_Ref(0.0),
-    fracDelaySamplesRight_Ref(0.0),
+    fracDelaySamplesRight_Ref(0.0){};
+    
     //crossfadeNeededL(false),
     //crossfadeNeededR(false),
     //t_L(-1),
-    t_R(-1){};
+    //t_R(-1){};
     ~DelayLine(){};
-    
     
     void setDelayL(double samples);
     void setDelayR(double samples);
@@ -81,10 +84,13 @@ public:
     
     void suspend(); // flush buffers
     
-private:
+    void initialize(){
+    }
+    
+    double delayLine_Vibrato_L(double input, double samples);
 
-    int t_L;
-    int t_R;
+private:
+    
     double y_1_L;
     double y_1_R;
     double y_1_L_ref;
@@ -94,7 +100,11 @@ private:
     
     double fracDelaySamplesLeft_Ref;
     double fracDelaySamplesRight_Ref;
-    bool crossfadeNeededL;
+    /*bool crossfadeNeededL;
     bool crossfadeNeededR;
+    int t_L;
+    int t_R;*/
+    
+
 };
 #endif /* DelayLine_hpp */

@@ -37,11 +37,13 @@ private:
     // access the processor object that created it.
     VirtualTubeDelayAudioProcessor& processor;
     
-    Label tubeLengthLeftLabel_, tubeLengthRightLabel_, gainLeftLabel_, gainRightLabel_, tubeSizeLabel_, dryWetMixLabel_, enabledReflectionLabel_, tubeLengthRefLeftLabel_, tubeLengthRefRightLabel_, gainRefLeftLabel_, gainRefRightLabel_;
+    Label tubeLengthLeftLabel_, tubeLengthRightLabel_, gainLeftLabel_, gainRightLabel_, tubeSizeLabel_, dryWetMixLabel_, enabledReflectionLabel_, enabledVibratoLabel_, tubeLengthRefLeftLabel_, tubeLengthRefRightLabel_, gainRefLeftLabel_, gainRefRightLabel_, enabledVibratoToggleLabel_;
     
     Slider tubeLengthLeftSlider_, tubeLengthRightSlider_, gainLeftSlider_, gainRightSlider_, tubeSizeSlider_, dryWetMixSlider_, tubeLengthRefLeftSlider_, tubeLengthRefRightSlider_, gainRefLeftSlider_, gainRefRightSlider_;
     
-    ToggleButton enabledReflectionToggleButton_;
+    ToggleButton enabledReflectionToggleButton_, enabledVibratoToggleButton_;
+    
+    TextEditor delayMsL_, delayMsR_, delayMsRefL_, delayMsRefR_;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VirtualTubeDelayAudioProcessorEditor)
 };

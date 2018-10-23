@@ -111,8 +111,8 @@
 		FADBC38F994B4C15B8464B90 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_audio_formats.mm"; path = "../../JuceLibraryCode/include_juce_audio_formats.mm"; sourceTree = "SOURCE_ROOT"; };
 		FEC0A369543B223AD20C24AD = {isa = PBXFileReference; lastKnownFileType = file; name = "juce_gui_extra"; path = "../../../JUCE/modules/juce_gui_extra"; sourceTree = "SOURCE_ROOT"; };
 		C0F5D1F1359E30CA5A0098BC = {isa = PBXGroup; children = (
-					018B9F458C919ECB745CE830,
 					2721EC2685A1A3110D7B93B0,
+					018B9F458C919ECB745CE830,
 					6A2F965954C69B2D4C172F5A,
 					1B66A0F03FD24E50E6248082,
 					7AE33066AF07086CE5D2DC86,

@@ -1,14 +1,3 @@
-/*
-  ==============================================================================
-
-    DelayLine.cpp
-    Created: 17 Oct 2018 1:52:35pm
-    Author:  Riccardo Simionato
-
-  ==============================================================================
-*/
-
-#include "DelayLine.h"
 //
 //  DelayLine.cpp
 //  VirtualTubeDelay
@@ -25,7 +14,7 @@ void DelayLine::setDelayL(double samples){
     
     rptrLeft = wptrLeft - (long)samples;
     //while (wptrLeft - bufferLeft >= len) { wptrLeft -= len; }
-    while (rptrLeft < bufferLeft) { rptrLeft += len; }
+    while (rptrLeft < delayBufferLeft_) { rptrLeft += delayBufferLength_; }
     
     fracDelaySamplesLeft = samples - (long)samples;
 }
@@ -34,7 +23,7 @@ void DelayLine::setDelayR(double samples){
     
     rptrRight = wptrRight - (long)samples;
     //while (wptrRight - bufferRight >= len) { wptrRight -= len; }
-    while (rptrRight < bufferRight) { rptrRight += len; }
+    while (rptrRight < delayBufferRight_) { rptrRight += delayBufferLength_; }
     
     fracDelaySamplesRight = samples - (long)samples;
 }
@@ -44,7 +33,7 @@ void DelayLine::setDelay_Ref_L(double samples){
     
     rptrLeft_Ref = wptrLeft_Ref - (long)samples;
     //while (wptrLeft_Ref - bufferLeft >= len) { wptrLeft_Ref -= len; }
-    while (rptrLeft_Ref < bufferLeft_Ref) { rptrLeft_Ref += len_ref; }
+    while (rptrLeft_Ref < delayBufferLeftRef_) { rptrLeft_Ref += delayBufferLengthRef_; }
     
     fracDelaySamplesLeft_Ref = samples - (long)samples;
 }
@@ -53,7 +42,7 @@ void DelayLine::setDelay_Ref_R(double samples){
     
     rptrRight_Ref = wptrRight_Ref - (long)samples;
     //while (wptrRight_Ref - bufferRight >= len) { wptrRight_Ref -= len; }
-    while (rptrRight_Ref < bufferRight_Ref) { rptrRight_Ref += len_ref; }
+    while (rptrRight_Ref < delayBufferRightRef_) { rptrRight_Ref += delayBufferLengthRef_; }
     
     fracDelaySamplesRight_Ref = samples - (long)samples;
 }
@@ -61,8 +50,8 @@ void DelayLine::setDelay_Ref_R(double samples){
 
 void suspend(){
 
-    memset(&bufferLeft, 0, len*sizeof(double));
-    memset(&bufferRight, 0, len*sizeof(double));
+   // memset(delayBufferLeft_, 0, delayBufferLength_*sizeof(double));
+   // memset(delayBufferRight_, 0, delayBufferLength_*sizeof(double));
 }
 
 
@@ -77,7 +66,7 @@ double DelayLine::delayLineL(double x)
      if (wptrLeft - bufferLeft >= len) { wptrLeft -= len; }*/
     
     double *rpi = (rptrLeft+1);
-    if (rpi - bufferLeft >= len) { rpi -= len; }
+    if (rpi - delayBufferLeft_ >= delayBufferLength_) { rpi -= delayBufferLength_; }
     
     /*double *z1 = (rptrLeft-1);
     double *z2 = (rptrLeft-2);
@@ -99,8 +88,8 @@ double DelayLine::delayLineL(double x)
     
     *wptrLeft++ = x;
     
-    if (rptrLeft - bufferLeft >= len) { rptrLeft -= len; }
-    if (wptrLeft - bufferLeft >= len) { wptrLeft -= len; }
+    if (rptrLeft - delayBufferLeft_ >= delayBufferLength_) { rptrLeft -= delayBufferLength_; }
+    if (wptrLeft - delayBufferLeft_ >= delayBufferLength_) { wptrLeft -= delayBufferLength_; }
     
     return y;
 }
@@ -111,7 +100,7 @@ double DelayLine::delayLineR(double x)
     double y;
     
     double *rpi = (rptrRight+1);
-    if (rpi - bufferRight >= len) { rpi -= len; }
+    if (rpi - delayBufferRight_ >= delayBufferLength_) { rpi -= delayBufferLength_; }
     
     y = (1 - fracDelaySamplesRight) * *rptrRight + fracDelaySamplesRight * *(rpi) - y_1_R * (1 - fracDelaySamplesRight);
     y_1_R = y;
@@ -119,8 +108,8 @@ double DelayLine::delayLineR(double x)
 
     *wptrRight++ = x;
     
-    if (rptrRight - bufferRight >= len) { rptrRight -= len; }
-    if (wptrRight - bufferRight >= len) { wptrRight -= len; }
+    if (rptrRight - delayBufferRight_ >= delayBufferLength_) { rptrRight -= delayBufferLength_; }
+    if (wptrRight - delayBufferRight_ >= delayBufferLength_) { wptrRight -= delayBufferLength_; }
     
     return y;
 }
@@ -133,15 +122,15 @@ double DelayLine::delayLine_Ref_L(double x)
     *wptrLeft_Ref++ = x;
     
     double *rpi = (rptrLeft_Ref+1);
-    if (rpi - bufferLeft_Ref >= len_ref) { rpi -= len_ref; }
+    if (rpi - delayBufferLeftRef_ >= delayBufferLengthRef_) { rpi -= delayBufferLengthRef_; }
     
     y = (1 - fracDelaySamplesLeft_Ref) * *rptrLeft_Ref + fracDelaySamplesLeft_Ref * *(rpi) - y_1_L_ref * (1 - fracDelaySamplesLeft_Ref);
     
     y_1_L_ref = y;
     rptrLeft_Ref += 1;
     
-    if (rptrLeft_Ref - bufferLeft_Ref >= len_ref) { rptrLeft_Ref -= len_ref; }
-    if (wptrLeft_Ref - bufferLeft_Ref >= len_ref) { wptrLeft_Ref -= len_ref; }
+    if (rptrLeft_Ref - delayBufferLeftRef_ >= delayBufferLengthRef_) { rptrLeft_Ref -= delayBufferLengthRef_; }
+    if (wptrLeft_Ref - delayBufferLeftRef_ >= delayBufferLengthRef_) { wptrLeft_Ref -= delayBufferLengthRef_; }
     
     return y;
 
@@ -152,18 +141,50 @@ double DelayLine::delayLine_Ref_R(double x)
     
     double y;
     
-    *wptrRight_Ref++ = x;
-    
     double *rpi = (rptrRight_Ref+1);
-    if (rpi - bufferRight_Ref >= len_ref) { rpi -= len_ref; }
+    if (rpi - delayBufferRightRef_ >= delayBufferLengthRef_) { rpi -= delayBufferLengthRef_; }
     
     y = (1 - fracDelaySamplesRight_Ref) * *rptrRight_Ref + fracDelaySamplesRight_Ref * *(rpi) - y_1_R_ref * (1 - fracDelaySamplesRight_Ref);
     
     y_1_R_ref = y;
     rptrRight_Ref += 1;
     
-    if (rptrRight_Ref - bufferRight_Ref >= len_ref) { rptrRight_Ref -= len_ref; }
-    if (wptrRight_Ref - bufferRight_Ref >= len_ref) { wptrRight_Ref -= len_ref; }
+    *wptrRight_Ref++ = x;
+    
+    if (rptrRight_Ref - delayBufferRightRef_ >= delayBufferLengthRef_) { rptrRight_Ref -= delayBufferLengthRef_; }
+    if (wptrRight_Ref - delayBufferRightRef_ >= delayBufferLengthRef_) { wptrRight_Ref -= delayBufferLengthRef_; }
     
     return y;
+}
+
+
+
+double DelayLine::delayLine_Vibrato_L(double x, double samples){
+    
+    double y;
+    
+    rptrLeft = wptrLeft - (long)samples + delayBufferLength_;// - 3;
+    while (rptrLeft < delayBufferLeft_) { rptrLeft += delayBufferLength_; }
+    
+    double fraction = samples - (long)samples;
+    
+    double *nextSample = (rptrLeft + 1);
+    
+    if (nextSample - delayBufferLeft_ >= delayBufferLength_) { nextSample -= delayBufferLength_; }
+
+    
+    y = fraction * *nextSample + (1.0f-fraction) * *rptrLeft;
+    
+    
+    *wptrLeft++ = x;
+    
+    rptrLeft++;
+    
+    if (wptrLeft - delayBufferLeft_ >= delayBufferLength_) { wptrLeft -= delayBufferLength_; }
+    if (rptrLeft - delayBufferLeft_ >= delayBufferLength_) { rptrLeft -= delayBufferLength_; }
+
+    
+    
+    return y;
+    
 }
