@@ -84,7 +84,7 @@ public:
     float tubeSize_; // Size of the tube (1.2-2.5 cm)
     
     bool enabledReflection_;
-    bool enabledVibrato_;
+    bool enabledRepeatedDelay_;
     
     float tubeLengthRefLeft_; // Tube length in m
     float tubeLengthRefRight_;
@@ -111,11 +111,23 @@ public:
     
     Filter mFilter;
     DelayLine mDelayLine;
-    
+        
+    double feedback_;
+    double damp_;
+    double tempo_;
+    double tempoBpm_;
+    double beatsEachSec;
+    double tempoInSec;
+    double tempoInSamples;
+
 private:
     
     int delayBufferLength_;
     int delayBufferLengthRef_;
+    
+    AudioPlayHead* playHead;
+    AudioPlayHead::CurrentPositionInfo currentPositionInfo;
+    
     
      // Circular buffer variables for implementing delay
     AudioBuffer<float> delayBufferLeft_2, delayBufferRight_2, delayBufferLeftRef_2, delayBufferRightRef_2;

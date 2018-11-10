@@ -44,6 +44,7 @@
       allowLocationSimulation = "YES">
       <PathRunnable
          runnableDebuggingMode = "0"
+         BundleIdentifier = "com.cockos.reaper"
          FilePath = "/Applications/REAPER64.app">
       </PathRunnable>
       <MacroExpansion>
@@ -55,6 +56,12 @@
             ReferencedContainer = "container:VirtualTubeDelay.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "/Users/riccardosimionato/plugin-development/reaper-project.RPP"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

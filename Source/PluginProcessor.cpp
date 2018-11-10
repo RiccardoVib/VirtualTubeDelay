@@ -25,7 +25,7 @@ VirtualTubeDelayAudioProcessor::VirtualTubeDelayAudioProcessor()
     dryWetMix_ = 0.0;
     tubeSize_ = 1.2;
     enabledReflection_ = false;
-    enabledVibrato_ = false;
+    enabledRepeatedDelay_ = false;
     
     leng_L = 10.0;
     leng_R = 10.0;
@@ -40,7 +40,7 @@ VirtualTubeDelayAudioProcessor::VirtualTubeDelayAudioProcessor()
     delaySamplesRef_L = 1533.913043478260;
     delaySamplesRef_R = 1533.913043478260;
 
-    
+    tempo_ = 1;
     //addParameter (tubeLengthLeft_ = new AudioParameterFloat ("tubeLengthLeft_", "TubeLength Left", 1.0f, 30.0f, 10.0f));
     //addParameter (gainLeft_     = new AudioParameterFloat ("gainLeft_",     "Gain Left",     0.0f, 10.0f, 5.0f));
 }
@@ -143,6 +143,14 @@ void VirtualTubeDelayAudioProcessor::prepareToPlay (double sampleRate, int sampl
     mFilter.setValues(tubeLengthRight_, rad);
     mFilter.getCalculatedCoefficients(1);
     
+    playHead = this->getPlayHead();
+    playHead->getCurrentPosition (currentPositionInfo);
+    
+    tempoBpm_ = currentPositionInfo.bpm;
+    beatsEachSec = tempoBpm_/60;
+    tempoInSec = (1./beatsEachSec)*getSampleRate();
+    tempoInSamples = tempoInSec/tempo_;
+    
 }
 void VirtualTubeDelayAudioProcessor::releaseResources()
 {
@@ -181,9 +189,8 @@ void VirtualTubeDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, M
     const int totalNumOutputChannels = getTotalNumOutputChannels();
     int numSamples = buffer.getNumSamples();
     
-    float ph = 0;           // Current LFO phase, always between 0-1
-    float frequency_;   // Frequency of the LFO
-    float sweepWidth_;
+    playHead = this->getPlayHead();
+    playHead->getCurrentPosition (currentPositionInfo);
     
     for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i){
         buffer.clear(i, 0, buffer.getNumSamples());
@@ -192,12 +199,13 @@ void VirtualTubeDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, M
     float* channelDataL = buffer.getWritePointer(0);
     float* channelDataR = buffer.getWritePointer(1);
 
-    if (!enabledVibrato_) {
-        
+    tempoBpm_ = currentPositionInfo.bpm;
+    beatsEachSec = tempoBpm_/60;
+    tempoInSec = (1./beatsEachSec)*getSampleRate();
+    tempoInSamples = tempoInSec/tempo_;
     
     if (!enabledReflection_) {
         
-    
         for (int i = 0; i < numSamples; ++i)
         {
             const float inL = channelDataL[i];
@@ -222,9 +230,9 @@ void VirtualTubeDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, M
                 
             }else{
                 
-                outL = inL * (1.0 - dryWetMix_) + dryWetMix_ * gainLeft_ * mDelayLine.delayLineL(bufOut_L[mFilter.i_0]);
+                outL = inL * (1.0 - dryWetMix_) + dryWetMix_ * gainLeft_ * mDelayLine.delayLineL(bufOut_L[mFilter.i_0], tempoInSamples, enabledRepeatedDelay_);
                 
-                outR  = inR * (1.0 - dryWetMix_) + dryWetMix_ * gainRight_ * mDelayLine.delayLineR(bufOut_R[mFilter.i_0]);
+                outR  = inR * (1.0 - dryWetMix_) + dryWetMix_ * gainRight_ * mDelayLine.delayLineR(bufOut_R[mFilter.i_0], tempoInSamples, enabledRepeatedDelay_);
             }
             
             channelDataL[i] = outL;
@@ -273,67 +281,14 @@ void VirtualTubeDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, M
                 
             }else{
     
-                outL = inL * (1.0 - dryWetMix_) + dryWetMix_ * (gainLeft_ * mDelayLine.delayLineL(bufOut_L[mFilter.i_0]) + gainRefLeft_ * mDelayLine.delayLine_Ref_L(bufOut_Fin_L[mFilter.j_0]));
+                outL = inL * (1.0 - dryWetMix_) + dryWetMix_ * (gainLeft_ * mDelayLine.delayLineL(bufOut_L[mFilter.i_0], tempoInSamples, enabledRepeatedDelay_) + gainRefLeft_ * mDelayLine.delayLine_Ref_L(bufOut_Fin_L[mFilter.j_0], tempoInSamples, enabledRepeatedDelay_));
         
-            outR = inR * (1.0 - dryWetMix_) + dryWetMix_ * (gainRight_ * mDelayLine.delayLineR(bufOut_R[mFilter.i_0]) + gainRefRight_ * mDelayLine.delayLine_Ref_R(bufOut_Fin_R[mFilter.j_0]));
+                outR = inR * (1.0 - dryWetMix_) + dryWetMix_ * (gainRight_ * mDelayLine.delayLineR(bufOut_R[mFilter.i_0], tempoInSamples, enabledRepeatedDelay_) + gainRefRight_ * mDelayLine.delayLine_Ref_R(bufOut_Fin_R[mFilter.j_0], tempoInSamples, enabledRepeatedDelay_));
         
             }
             
             channelDataL[i] = outL;
             channelDataR[i] = outR;
-        }
-    }
-        
-    }else{
-        
-         int Delay = 8; // basic delay of input sample in sec 5-10 ms
-         int Width = 4;
-        
-         int DELAY = round(Delay*44100); // basic delay in # samples
-         int WIDTH = round(Width*44100); // modulation width in # samples
-         
-         //must be  WIDTH<DELAY
-         //error(’delay greater than basic delay !!!’);
-        
-        int Modfreq = 1000;// 5 to 14 Hz
-        
-        double MODFREQ= Modfreq/44100; // modulation frequency in # samples
-         
-         //L=2+DELAY+WIDTH*2; // length of the entire delay
-        
-        for (int i = 0; i < numSamples; ++i)
-        {
-            const float inL = channelDataL[i];
-            const float inR = channelDataR[i];
-            
-            float inverseSampleRate = 1/44100;
-        
-            frequency_ = 1000;
-            float ratio = 10;
-            
-            //sweepWidth_ = (ratio-1.0)*44100 / (2*M_PI*ph*frequency_);
-            
-            double currentDelay = sin(MODFREQ * 2.0 * M_PI * i);//sweepWidth_ * (0.5 + 0.5 * sin(2.0 * M_PI * ph));
-            
-            
-            mFilter.process();
-            
-            bufIn_L[mFilter.i_0] = inL;
-            
-            bufIn_R[mFilter.i_0] = inR;
-            
-            bufOut_L[mFilter.i_0] = bufIn_L[mFilter.i_0] * mFilter.b0f_L + bufIn_L[mFilter.i_1] * mFilter.b1f_L + bufIn_L[mFilter.i_2] * mFilter.b2f_L + bufIn_L[mFilter.i_3] * mFilter.b3f_L + bufIn_L[mFilter.i_4] * mFilter.b4f_L + bufIn_L[mFilter.i_5] * mFilter.b5f_L + bufIn_L[mFilter.i_6] * mFilter.b6f_L - bufOut_L[mFilter.i_1] * mFilter.a1f_L - bufOut_L[mFilter.i_2] * mFilter.a2f_L - bufOut_L[mFilter.i_3] * mFilter.a3f_L - bufOut_L[mFilter.i_4] * mFilter.a4f_L  - bufOut_L[mFilter.i_5] * mFilter.a5f_L - bufOut_L[mFilter.i_6] * mFilter.a6f_L;
-            
-            bufOut_R[mFilter.i_0] = bufIn_R[mFilter.i_0] * mFilter.b0f_R + bufIn_R[mFilter.i_1] * mFilter.b1f_R + bufIn_R[mFilter.i_2] * mFilter.b2f_R + bufIn_R[mFilter.i_3] * mFilter.b3f_R + bufIn_R[mFilter.i_4] * mFilter.b4f_R + bufIn_R[mFilter.i_5] * mFilter.b5f_R + bufIn_R[mFilter.i_6] * mFilter.b6f_R - bufOut_R[mFilter.i_1] * mFilter.a1f_R - bufOut_R[mFilter.i_2] * mFilter.a2f_R - bufOut_R[mFilter.i_3] * mFilter.a3f_R - bufOut_R[mFilter.i_4] * mFilter.a4f_R - bufOut_R[mFilter.i_5] * mFilter.a5f_R - bufOut_R[mFilter.i_6] * mFilter.a6f_R;
-            
-            //channelDataR[i] = channelDataL[i] = mDelayLine.delayLine_Vibrato_L(bufOut_L[mFilter.i_0], currentDelay);
-            channelDataL[i] = gainLeft_ * sin(MODFREQ * 2.0 * mPI * i);// * mDelayLine.delayLine_Vibrato_L(inL, currentDelay);
-
-            
-            ph += frequency_*inverseSampleRate;
-            if(ph >= 1.0){
-                ph -= 1.0;
-            }
         }
     }
 

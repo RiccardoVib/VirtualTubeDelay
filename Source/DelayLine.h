@@ -22,8 +22,8 @@
 #include <tgmath.h>
 #include <vector>
 
-const int delayBufferLength_ = (int)(31/0.345)*44.1 + 1;
-const int delayBufferLengthRef_ = (int)(41/0.345)*44.1 + 1;
+const int delayBufferLength_ = 88201;//(int)(31/0.345)*44.1 + 1;
+const int delayBufferLengthRef_ = 88201;//(int)(41/0.345)*44.1 + 1;
 
 static double delayBufferLeft_[delayBufferLength_];
 static double delayBufferRight_[delayBufferLength_];
@@ -73,21 +73,19 @@ public:
     void setDelayL(double samples);
     void setDelayR(double samples);
     
-    double delayLineL(double input);
-    double delayLineR(double input);
+    double delayLineL(double input, double tempo, bool repeated);
+    double delayLineR(double input, double tempo, bool repeated);
     
     void setDelay_Ref_L(double samples);
     void setDelay_Ref_R(double samples);
     
-    double delayLine_Ref_L(double input);
-    double delayLine_Ref_R(double input);
+    double delayLine_Ref_L(double input, double tempo, bool repeated);
+    double delayLine_Ref_R(double input, double tempo, bool repeated);
     
     void suspend(); // flush buffers
     
     void initialize(){
     }
-    
-    double delayLine_Vibrato_L(double input, double samples);
 
 private:
     
