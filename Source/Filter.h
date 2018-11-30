@@ -178,10 +178,6 @@ public:
     
     Filter() :
     
-    ptr(0),
-    ptr2(0),
-    //mSampleRate(44100.0),
-    
     Q1(0.65000000000000002),
     fcLP(4100.0),
     G1(-8.6499999999999985),
@@ -240,6 +236,9 @@ public:
     b5f_R(-0.0017872423055908145),
     b6f_R(0.00054113344012696836),
     
+    ptr(0),
+    ptr2(0),
+    
     i_0(0),
     i_1(0),
     i_2(0),
@@ -259,14 +258,14 @@ public:
     
     void process();
     
-    inline double setLengt(double lengthInput) {
+    inline double setLengt(float lengthInput) {
         return (double)((long)floor(lengthInput*100))/100; };
     
     inline double setDelayMilliseconds(double lengtInput) { return lengtInput/0.345; };
     
     inline double setDelaySamples(double delayMilliseconds) { return (double)(delayMilliseconds * (mSampleRate/1000)); };
     
-    void setValues(double inputLength, double inputSize);
+    void setValues(float inputLength, double inputSize);
     
     void getCalculatedCoefficients(int side);
     

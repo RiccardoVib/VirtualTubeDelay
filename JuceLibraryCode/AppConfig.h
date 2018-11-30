@@ -319,13 +319,13 @@
  #define JucePlugin_Enable_IAA             0
 #endif
 #ifndef  JucePlugin_Name
- #define JucePlugin_Name                   "VirtualTubeDelayJUCE"
+ #define JucePlugin_Name                   "VirtualTubeDelay"
 #endif
 #ifndef  JucePlugin_Desc
  #define JucePlugin_Desc                   "VirtualTubeDelay"
 #endif
 #ifndef  JucePlugin_Manufacturer
- #define JucePlugin_Manufacturer           "yourcompany"
+ #define JucePlugin_Manufacturer           "Accademia"
 #endif
 #ifndef  JucePlugin_ManufacturerWebsite
  #define JucePlugin_ManufacturerWebsite    ""
@@ -334,7 +334,7 @@
  #define JucePlugin_ManufacturerEmail      ""
 #endif
 #ifndef  JucePlugin_ManufacturerCode
- #define JucePlugin_ManufacturerCode       0x4d616e75 // 'Manu'
+ #define JucePlugin_ManufacturerCode       0x4143444d // 'ACDM'
 #endif
 #ifndef  JucePlugin_PluginCode
  #define JucePlugin_PluginCode             0x54796f63 // 'Tyoc'
@@ -430,5 +430,5 @@
  #define JucePlugin_IAASubType             JucePlugin_PluginCode
 #endif
 #ifndef  JucePlugin_IAAName
- #define JucePlugin_IAAName                "yourcompany: VirtualTubeDelayJUCE"
+ #define JucePlugin_IAAName                "Accademia: VirtualTubeDelay"
 #endif

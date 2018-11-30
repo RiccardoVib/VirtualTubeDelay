@@ -76,30 +76,30 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     
     // Adjustable parameters:
-    float tubeLengthLeft_; // Tube length in m
-    float tubeLengthRight_;
-    float gainLeft_; // Gain
-    float gainRight_;
-    float dryWetMix_; // Mix level of original and delayed signal (0-1)
-    float tubeSize_; // Size of the tube (1.2-2.5 cm)
+    float* tubeLengthLeft_ = nullptr; // Tube length in m
+    float* tubeLengthRight_ = nullptr;
+    float* gainLeft_ = nullptr; // Gain
+    float* gainRight_ = nullptr;
+    float* dryWetMix_ = nullptr; // Mix level of original and delayed signal (0-1)
+    float* tubeSize_ = nullptr; // Size of the tube (1.2-2.5 cm)
+
+    int multitapDelay_;
+    bool multitap_;
     
-    bool enabledReflection_;
-    bool enabledRepeatedDelay_;
-    
-    float tubeLengthRefLeft_; // Tube length in m
-    float tubeLengthRefRight_;
-    float gainRefLeft_; // Gain
-    float gainRefRight_;
+    float* tubeLengthRefLeft_ = nullptr; // Tube length in m
+    float* tubeLengthRefRight_ = nullptr;
+    float* gainRefLeft_ = nullptr; // Gain
+    float* gainRefRight_ = nullptr;
  
     
     int rad;
-    float leng_L;
-    float delayMilli_L;
-    float delaySamples_L;
+    double leng_L;
+    double delayMilli_L;
+    double delaySamples_L;
     
-    float leng_R;
-    float delayMilli_R;
-    float delaySamples_R;
+    double leng_R;
+    double delayMilli_R;
+    double delaySamples_R;
     
     double lengRef_L;
     double delayMilliRef_L;
@@ -112,14 +112,17 @@ public:
     Filter mFilter;
     DelayLine mDelayLine;
         
-    double feedback_;
+    float* feedback_ = nullptr;
     double damp_;
-    double tempo_;
+    float* tempo_ = nullptr;
     double tempoBpm_;
-    double beatsEachSec;
-    double tempoInSec;
+    double beatLenghtInSec;
+    double beatLenghtInSamples;
     double tempoInSamples;
-
+    bool sync_;// = nullptr;
+    
+    AudioProcessorValueTreeState parameters;
+       
 private:
     
     int delayBufferLength_;
@@ -130,7 +133,7 @@ private:
     
     
      // Circular buffer variables for implementing delay
-    AudioBuffer<float> delayBufferLeft_2, delayBufferRight_2, delayBufferLeftRef_2, delayBufferRightRef_2;
+    //AudioBuffer<float> delayBufferLeft_2, delayBufferRight_2, delayBufferLeftRef_2, delayBufferRightRef_2;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VirtualTubeDelayAudioProcessor)

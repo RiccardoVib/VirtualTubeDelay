@@ -32,10 +32,10 @@ void Filter::process() {
 }
 
 
-void Filter::setValues(double tubeLength, double tubeSize) {
+void Filter::setValues(float tubeLength, double tubeSize) {
     
     double lengt = setLengt(tubeLength);
-    //if(lengt > 30 || lengt < 2){lengt = 10;}
+    if(lengt > 30 || lengt < 2){lengt = 10;}
     long stepLength = floor(lengt);
         
     if (tubeSize <= 6){
