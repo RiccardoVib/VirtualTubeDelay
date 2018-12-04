@@ -1,10 +1,10 @@
 # Virtual Tube Delay
 
-A stereo delay effect plugin in PURE DATA based on the real-time simulation of acoustic wave propagation in a garden hose
+A stereo delay effect plugin based on the real-time simulation of acoustic wave propagation in a garden hose
 
 # Author
 
-Virtual Tube Delay Effect is written and maintained by Riccardo Simionato.
+Virtual Tube Delay effect is written and maintained by Riccardo Simionato.
 
 # Academic Paper
 
