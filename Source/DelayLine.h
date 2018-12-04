@@ -22,29 +22,6 @@
 #include <tgmath.h>
 #include <vector>
 
-/*const int delayBufferLength_ =6*44100;//3835;//(int)(30/0.345)*44.1 + 1;
-const int delayBufferLengthRef_ = 6*44100;//5114;//(int)(40/0.345)*44.1 + 1;
-
-static double delayBufferLeft_[delayBufferLength_];
-static double delayBufferRight_[delayBufferLength_];
-
-static double delayBufferLeftRef_[delayBufferLengthRef_];
-static double delayBufferRightRef_[delayBufferLengthRef_];
-
-static double *rptrLeft = delayBufferLeft_; // read ptr
-static double *wptrLeft = delayBufferLeft_; // write ptr
-
-static double *rptrRight = delayBufferRight_; // read ptr
-static double *wptrRight = delayBufferRight_; // write ptr
-
-static double *rptrLeft_Ref = delayBufferLeftRef_;
-static double *rptrRight_Ref = delayBufferRightRef_;
-
-static double *wptrLeft_Ref = delayBufferLeftRef_;
-static double *wptrRight_Ref = delayBufferRightRef_;
-
-static double alpha = 1/2048;*/
-
 class DelayLine {
 public:
     
@@ -60,14 +37,14 @@ public:
     
     ~DelayLine(){};
     
-    void setDelayL(double samples);
-    void setDelayR(double samples);
+    void setDelay_L(double samples);
+    void setDelay_R(double samples);
     
-    double delayLineL(double input);
-    double delayLineR(double input);
+    double delayLine_L(double input);
+    double delayLine_R(double input);
     
-    double delayLineRepL(double input, double tempo, int tempo_, double feedback);
-    double delayLineRepR(double input, double tempo, int tempo_, double feedback);
+    double delayLineRep_L(double input, double tempoDelay, double feedback);
+    double delayLineRep_R(double input, double tempoDelay, double feedback);
     
     void setDelay_Ref_L(double samples);
     void setDelay_Ref_R(double samples);
@@ -75,8 +52,8 @@ public:
     double delayLine_Ref_L(double input);
     double delayLine_Ref_R(double input);
     
-    double delayLineRep_Ref_L(double input, double tempo, int tempo_, double feedback);
-    double delayLineRep_Ref_R(double input, double tempo, int tempo_, double feedback);
+    double delayLineRep_Ref_L(double input, double tempoDelay, double feedback);
+    double delayLineRep_Ref_R(double input, double tempoDelay, double feedback);
     
     void setSampleRate(double sampleRate){ mSampleRate = sampleRate;}
     

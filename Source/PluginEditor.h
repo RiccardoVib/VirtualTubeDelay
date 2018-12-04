@@ -39,6 +39,20 @@ public:
         return valueText;
     }
     
+    inline std::string createTextForTempo(double value){
+    
+        int eraseNumber;
+    
+        if(value < 10){ eraseNumber = 10; }
+        else{ eraseNumber = 11; }
+    
+        std::string tempoText = "Tempo: 1/";
+        tempoText.append(std::to_string(value));
+        tempoText.erase(eraseNumber);
+        
+        return tempoText;
+    }
+    
     typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
     typedef AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
     
@@ -46,13 +60,13 @@ private:
     
     VirtualTubeDelayAudioProcessor& processor;
     
-    Label tubeLengthLeftLabel_, tubeLengthRightLabel_, gainLeftLabel_, gainRightLabel_, tubeSizeLabel_, dryWetMixLabel_, tubeLengthRefLeftLabel_, tubeLengthRefRightLabel_, gainRefLeftLabel_, gainRefRightLabel_, multitapDelayLabel_;
+    Label tubeLengthLeftLabel_, tubeLengthRightLabel_, gainLeftLabel_, gainRightLabel_, tubeSizeLabel_, dryWetMixLabel_, tubeEndLeftLabel_, tubeEndRightLabel_, gainRefLeftLabel_, gainRefRightLabel_, multitapDelayLabel_;
     
-    Label feedbackLabel_, dampLabel_, tempoLabel_, syncLabel_;
+    Label feedbackLabel_, tempoLabel_, syncLabel_;
     
-    Slider tubeLengthLeftSlider_, tubeLengthRightSlider_, gainLeftSlider_, gainRightSlider_, tubeSizeSlider_, dryWetMixSlider_, tubeLengthRefLeftSlider_, tubeLengthRefRightSlider_, gainRefLeftSlider_, gainRefRightSlider_;
+    Slider tubeLengthLeftSlider_, tubeLengthRightSlider_, gainLeftSlider_, gainRightSlider_, tubeSizeSlider_, dryWetMixSlider_, tubeEndLeftSlider_, tubeEndRightSlider_, gainRefLeftSlider_, gainRefRightSlider_;
     
-    Slider feedbackSlider_, dampSlider_, tempoSlider_;
+    Slider feedbackSlider_, tempoSlider_;
     
     ToggleButton multitapDelayToggleButton_, syncToggleButton_;
     
@@ -65,15 +79,15 @@ private:
     SliderAttachment* gainRightAttachment;
     SliderAttachment* tubeSizeAttachment;
     SliderAttachment* dryWetMixAttachment;
-    SliderAttachment* tubeLengthRefLeftAttachment;
-    SliderAttachment* tubeLengthRefRightAttachment;
+    SliderAttachment* tubeEndLeftAttachment;
+    SliderAttachment* tubeEndRightAttachment;
     SliderAttachment* gainRefLeftAttachment;
     SliderAttachment* gainRefRightAttachment;
     SliderAttachment* feedbackAttachment;
     SliderAttachment* tempoAttachment;
     
-    //ButtonAttachment* multitapAttachment;
-    //ButtonAttachment* syncAttachment;
+    ButtonAttachment* multitapAttachment;
+    ButtonAttachment* syncAttachment;
         
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VirtualTubeDelayAudioProcessorEditor)
 };

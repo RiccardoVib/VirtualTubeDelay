@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="TyoCIz" name="VirtualTubeDelay" projectType="audioplug" jucerVersion="5.3.2"
-              pluginFormats="buildStandalone,buildVST3" pluginVST3Category="Delay,Filter,Stereo"
+              pluginFormats="buildAU,buildStandalone,buildVST3" pluginVST3Category="Delay,Filter,Stereo"
               pluginName="VirtualTubeDelay" pluginManufacturer="Accademia"
               pluginManufacturerCode="ACDM">
   <MAINGROUP id="XoSo4V" name="VirtualTubeDelay">

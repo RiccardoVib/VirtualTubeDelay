@@ -20,24 +20,22 @@ VirtualTubeDelayAudioProcessor::VirtualTubeDelayAudioProcessor()
     
     parameters.createAndAddParameter("tubeLengthLeft_", "tubeLengthLeft", "tubeLengthLeft", NormalisableRange<float>(2,30), 10, nullptr, nullptr);
     parameters.createAndAddParameter("tubeLengthRight_", "tubeLengthRight", "tubeLengthRight", NormalisableRange<float>(2,30), 10, nullptr, nullptr);
-    parameters.createAndAddParameter("gainLeft_", "gainLeft", "gainLeft", NormalisableRange<float>(0,10), 2, nullptr, nullptr);
-    parameters.createAndAddParameter("gainRight_", "gainRight", "gainRight", NormalisableRange<float>(0,10), 2, nullptr, nullptr);
+    parameters.createAndAddParameter("gainLeft_", "gainLeft", "gainLeft", NormalisableRange<float>(0,9), 2, nullptr, nullptr);
+    parameters.createAndAddParameter("gainRight_", "gainRight", "gainRight", NormalisableRange<float>(0,9), 2, nullptr, nullptr);
 
     parameters.createAndAddParameter("dryWetMix_", "dryWetMix", "dryWetMix", NormalisableRange<float>(0.0, 1.0), 0, nullptr, nullptr);
     parameters.createAndAddParameter("tubeSize_", "tubeSize", "tubeSize", NormalisableRange<float>(1.2,2.5), 1.2, nullptr, nullptr);
     
-    parameters.createAndAddParameter("tubeLengthRefLeft_", "tubeLengthRefLeft", "tubeLengthRefLeft", NormalisableRange<float>(1,5), 1, nullptr, nullptr);
-    parameters.createAndAddParameter("tubeLengthRefRight_", "tubeLengthRefRight", "tubeLengthRefRight", NormalisableRange<float>(1,5), 1, nullptr, nullptr);
-    parameters.createAndAddParameter("gainRefLeft_", "gainRefLeft", "gainRefLeft", NormalisableRange<float>(0,20), 4, nullptr, nullptr);
-    parameters.createAndAddParameter("gainRefRight_", "gainRefRight_", "gainRefRight_", NormalisableRange<float>(0,20), 4, nullptr, nullptr);
-    parameters.createAndAddParameter("feedback_", "feedback", "feedback_", NormalisableRange<float>(0.1,0.9), 0.1, nullptr, nullptr);
-    parameters.createAndAddParameter("tempo_", "tempo", "tempo", NormalisableRange<float>(1,30), 10, nullptr, nullptr);
-    
-    //parameters.createAndAddParameter("multitap_", "multitap", "multitap", NormalisableRange<float>(0,1), false, nullptr, nullptr);
-    //parameters.createAndAddParameter("sync_", "sync", "sync", NormalisableRange<float>(0,1), false, nullptr, nullptr);
+    parameters.createAndAddParameter("tubeEndLeft_", "tubeEndLeft", "tubeEndLeft", NormalisableRange<float>(1,5), 1, nullptr, nullptr);
+    parameters.createAndAddParameter("tubeEndRight_", "tubeEndRight", "tubeEndRight", NormalisableRange<float>(1,5), 1, nullptr, nullptr);
+    parameters.createAndAddParameter("gainRefLeft_", "gainRefLeft", "gainRefLeft", NormalisableRange<float>(0,18), 4, nullptr, nullptr);
+    parameters.createAndAddParameter("gainRefRight_", "gainRefRight", "gainRefRight", NormalisableRange<float>(0,18), 4, nullptr, nullptr);
+    parameters.createAndAddParameter("feedback_", "feedback", "feedback", NormalisableRange<float>(0.1,0.9), 0.1, nullptr, nullptr);
+    parameters.createAndAddParameter("tempo_", "tempo", "tempo", NormalisableRange<float>(1,32), 1, nullptr, nullptr);
+    parameters.createAndAddParameter("multitap_", "multitap", "multitap", NormalisableRange<float>(0,1), false, nullptr, nullptr, true);
+    parameters.createAndAddParameter("sync_", "sync", "sync", NormalisableRange<float>(0,1), false, nullptr, nullptr, true);
     
     parameters.state = ValueTree("SavedParams");
-    
     
     tubeLengthLeft_ = parameters.getRawParameterValue ("tubeLengthLeft_");
     tubeLengthRight_ = parameters.getRawParameterValue ("tubeLengthRight_");
@@ -45,17 +43,14 @@ VirtualTubeDelayAudioProcessor::VirtualTubeDelayAudioProcessor()
     gainRight_ = parameters.getRawParameterValue ("gainRight_");
     dryWetMix_ = parameters.getRawParameterValue ("dryWetMix_");
     tubeSize_ = parameters.getRawParameterValue ("tubeSize_");
-    
-    tubeLengthRefLeft_ = parameters.getRawParameterValue ("tubeLengthRefLeft_");
-    tubeLengthRefRight_ = parameters.getRawParameterValue ("tubeLengthRefRight_");
+    tubeEndLeft_ = parameters.getRawParameterValue ("tubeEndLeft_");
+    tubeEndRight_ = parameters.getRawParameterValue ("tubeEndRight_");
     gainRefLeft_ = parameters.getRawParameterValue ("gainRefLeft_");
     gainRefRight_ = parameters.getRawParameterValue ("gainRefRight_");
     feedback_ = parameters.getRawParameterValue ("feedback_");
     tempo_ = parameters.getRawParameterValue ("tempo_");
-
-    //multitap_ = parameters.getRawParameterValue ("multitap_");
-    //sync_ = parameters.getRawParameterValue ("sync_");
-
+    multitap_ = parameters.getRawParameterValue ("multitap_");
+    sync_ = parameters.getRawParameterValue ("sync_");
     
     // Set default values:
     multitapDelay_ = 0;
@@ -72,14 +67,10 @@ VirtualTubeDelayAudioProcessor::VirtualTubeDelayAudioProcessor()
     delaySamplesRef_L = 1533.913043478260;
     delaySamplesRef_R = 1533.913043478260;
 
-    //feedback_ = 0.1;
     tempoBpm_ = 120;
     beatLenghtInSec = 2;
     beatLenghtInSamples = 88200;
-    tempoInSamples = delaySamples_L;
-    
-    sync_ = false;
-    multitap_ = false;
+
     //addParameter (tubeLengthLeft_ = new AudioParameterFloat ("tubeLengthLeft_", "TubeLength Left", 1.0f, 30.0f, 10.0f));
     //addParameter (gainLeft_     = new AudioParameterFloat ("gainLeft_",     "Gain Left",     0.0f, 10.0f, 5.0f));
 }
@@ -154,6 +145,34 @@ void VirtualTubeDelayAudioProcessor::changeProgramName (int index, const String&
 void VirtualTubeDelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     
+    ptr = 0;
+    ptr2 = 0;
+    
+    i_0 = 0;
+    i_1 = 0;
+    i_2 = 0;
+    i_3 = 0;
+    i_4 = 0;
+    i_5 = 0;
+    i_6 = 0;
+    
+    j_0 = 0;
+    j_1 = 0;
+    j_2 = 0;
+    j_3 = 0;
+    
+    incrementGain_L = 0;
+    interpolatedGain_L = 2;
+    previousGain_L = 2;
+    
+    incrementGain_R = 0;
+    interpolatedGain_R = 2;
+    previousGain_R = 2;
+    
+    incrementDelaySamples = 0;
+    interpolatedDelaySamples = delaySamples_L;
+    previousDelaySamples = delaySamples_L;
+    
     mDelayLine.setSampleRate(getSampleRate());
     mFilter.setSampleRate(getSampleRate());
     delayBufferLength_ = (int)((31/0.345) * sampleRate/1000);
@@ -170,8 +189,8 @@ void VirtualTubeDelayAudioProcessor::prepareToPlay (double sampleRate, int sampl
     
     beatLenghtInSec = tempoBpm_/60;
     beatLenghtInSamples = beatLenghtInSec * getSampleRate();
-    //tempoInSamples = beatLenghtInSamples/tempo_;
-    tempoInSamples = delaySamples_L;
+    tempoInSamples_L = delaySamples_L;
+    tempoInSamples_R = delaySamples_R;
     
     //auto tubeLengthLeft_Copy = tubeLengthLeft_->get();
     
@@ -180,14 +199,14 @@ void VirtualTubeDelayAudioProcessor::prepareToPlay (double sampleRate, int sampl
     leng_L = mFilter.setLengt(*tubeLengthLeft_);
     delayMilli_L = mFilter.setDelayMilliseconds(leng_L);
     delaySamples_L = mFilter.setDelaySamples(delayMilli_L);
-    mDelayLine.setDelayL(delaySamples_L);
+    mDelayLine.setDelay_L(delaySamples_L);
     mFilter.setValues(*tubeLengthLeft_, rad);
     mFilter.getCalculatedCoefficients(0);
 
     leng_R = mFilter.setLengt(*tubeLengthRight_);
     delayMilli_R = mFilter.setDelayMilliseconds(leng_R);
     delaySamples_R = mFilter.setDelaySamples(delayMilli_R);
-    mDelayLine.setDelayR(delaySamples_R);
+    mDelayLine.setDelay_R(delaySamples_R);
     mFilter.setValues(*tubeLengthRight_, rad);
     mFilter.getCalculatedCoefficients(1);
     
@@ -196,6 +215,7 @@ void VirtualTubeDelayAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
+    mDelayLine.suspend();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -239,62 +259,84 @@ void VirtualTubeDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, M
     float* channelDataL = buffer.getWritePointer(0);
     float* channelDataR = buffer.getWritePointer(1);
 
-    if(sync_){
+    if(*sync_){
+        
         tempoBpm_ = currentPositionInfo.bpm;
         beatLenghtInSec = tempoBpm_/60;
         beatLenghtInSamples = beatLenghtInSec * getSampleRate();
-        tempoInSamples = beatLenghtInSamples/ *tempo_;
+        tempoInSamples_L = beatLenghtInSamples/ *tempo_;
+        tempoInSamples_R = beatLenghtInSamples/ *tempo_;
+        
     }else{
-        tempoInSamples = (*tempo_/345)*getSampleRate();
+        
+        tempoInSamples_L = delaySamples_L;
+        tempoInSamples_R = delaySamples_R;
+        
     }
     
+    if(multitapDelay_ == 1){
         
+        mDelayLine.setDelay_L(tempoInSamples_L);
+        mDelayLine.setDelay_R(tempoInSamples_R);
+        mDelayLine.setDelay_Ref_L(tempoInSamples_L);
+        mDelayLine.setDelay_Ref_R(tempoInSamples_R);
+        
+    }else{
+        
+        applyDelay_L(numSamples);
+        
+        mDelayLine.setDelay_L(interpolatedDelaySamples);
+        mDelayLine.setDelay_R(delaySamples_R);
+        mDelayLine.setDelay_Ref_L(delaySamplesRef_L);
+        mDelayLine.setDelay_Ref_R(delaySamplesRef_R);
+        
+    }
+    
+    currentGain_L = *gainLeft_;
+    currentGain_R = *gainRight_;
+    currentGainRef_L = *gainRefLeft_;
+    currentGainRef_R = *gainRefRight_;
+    
+    double wetValue_ = *dryWetMix_;
+    double currentFeedback = *feedback_;
+    
+    applyGain_L(numSamples);
+    applyGain_R(numSamples);
+    
     for (int i = 0; i < numSamples; ++i)
     {
+        process();
         
         const double inL = channelDataL[i];
         const double inR = channelDataR[i];
         double outL = 0.0;
         double outR = 0.0;
-  
-        mFilter.process();
         
-        bufIn_L[mFilter.i_0] = inL;
+        outL = computeOutFilter_L(inL);
+        double xL = outL;
         
-        bufIn_R[mFilter.i_0] = inR;
+        outR = computeOutFilter_R(inR);
+        double xR = outR;
         
-        bufOut_L[mFilter.i_0] = bufIn_L[mFilter.i_0] * mFilter.b0f_L + bufIn_L[mFilter.i_1] * mFilter.b1f_L + bufIn_L[mFilter.i_2] * mFilter.b2f_L + bufIn_L[mFilter.i_3] * mFilter.b3f_L + bufIn_L[mFilter.i_4] * mFilter.b4f_L + bufIn_L[mFilter.i_5] * mFilter.b5f_L + bufIn_L[mFilter.i_6] * mFilter.b6f_L - bufOut_L[mFilter.i_1] * mFilter.a1f_L - bufOut_L[mFilter.i_2] * mFilter.a2f_L - bufOut_L[mFilter.i_3] * mFilter.a3f_L - bufOut_L[mFilter.i_4] * mFilter.a4f_L - bufOut_L[mFilter.i_5] * mFilter.a5f_L - bufOut_L[mFilter.i_6] * mFilter.a6f_L;
+        double outFinL = computeOutReflectionFilter_L(outL);
+        double x_fin_L = outFinL;
         
-        bufOut_R[mFilter.i_0] = bufIn_R[mFilter.i_0] * mFilter.b0f_R + bufIn_R[mFilter.i_1] * mFilter.b1f_R + bufIn_R[mFilter.i_2] * mFilter.b2f_R + bufIn_R[mFilter.i_3] * mFilter.b3f_R + bufIn_R[mFilter.i_4] * mFilter.b4f_R + bufIn_R[mFilter.i_5] * mFilter.b5f_R + bufIn_R[mFilter.i_6] * mFilter.b6f_R - bufOut_R[mFilter.i_1] * mFilter.a1f_R - bufOut_R[mFilter.i_2] * mFilter.a2f_R - bufOut_R[mFilter.i_3] * mFilter.a3f_R - bufOut_R[mFilter.i_4] * mFilter.a4f_R - bufOut_R[mFilter.i_5] * mFilter.a5f_R - bufOut_R[mFilter.i_6] * mFilter.a6f_R;
+        double outFinR = computeOutReflectionFilter_R(outR);
+        double x_fin_R = outFinR;
         
-        bufIn_Ref_L[mFilter.i_0] = bufOut_L[mFilter.i_0];
-        bufIn_Ref_R[mFilter.i_0] = bufOut_R[mFilter.i_0];
-            
-        bufOut_Ref_L[mFilter.i_0] = bufIn_Ref_L[mFilter.i_0] * mFilter.b0f_Ref_L + bufIn_Ref_L[mFilter.i_1] * mFilter.b1f_Ref_L + bufIn_Ref_L[mFilter.i_2] * mFilter.b2f_Ref_L + bufIn_Ref_L[mFilter.i_3] * mFilter.b3f_Ref_L + bufIn_Ref_L[mFilter.i_4] * mFilter.b4f_Ref_L + bufIn_Ref_L[mFilter.i_5] * mFilter.b5f_Ref_L + bufIn_Ref_L[mFilter.i_6] * mFilter.b6f_Ref_L - bufOut_Ref_L[mFilter.i_1] * mFilter.a1f_Ref_L - bufOut_Ref_L[mFilter.i_2] * mFilter.a2f_Ref_L - bufOut_Ref_L[mFilter.i_3] * mFilter.a3f_Ref_L - bufOut_Ref_L[mFilter.i_4] * mFilter.a4f_Ref_L - bufOut_Ref_L[mFilter.i_5] * mFilter.a5f_Ref_L - bufOut_Ref_L[mFilter.i_6] * mFilter.a6f_Ref_L;
-        
-        bufOut_Ref_R[mFilter.i_0] = bufIn_Ref_R[mFilter.i_0] * mFilter.b0f_Ref_R + bufIn_Ref_R[mFilter.i_1] * mFilter.b1f_Ref_R + bufIn_Ref_R[mFilter.i_2] * mFilter.b2f_Ref_R + bufIn_Ref_R[mFilter.i_3] * mFilter.b3f_Ref_R + bufIn_Ref_R[mFilter.i_4] * mFilter.b4f_Ref_R + bufIn_Ref_R[mFilter.i_5] * mFilter.b5f_Ref_R + bufIn_Ref_R[mFilter.i_6] * mFilter.b6f_Ref_R - bufOut_Ref_R[mFilter.i_1] * mFilter.a1f_Ref_R - bufOut_Ref_R[mFilter.i_2] * mFilter.a2f_Ref_R - bufOut_Ref_R[mFilter.i_3] * mFilter.a3f_Ref_R - bufOut_Ref_R[mFilter.i_4] * mFilter.a4f_Ref_R - bufOut_Ref_R[mFilter.i_5] * mFilter.a5f_Ref_R - bufOut_Ref_R[mFilter.i_6] * mFilter.a6f_Ref_R;
-        
-        bufIn_Fin_L[mFilter.j_0] = bufOut_L[mFilter.i_0];
-        bufIn_Fin_R[mFilter.j_0] = bufOut_R[mFilter.i_0];
-        
-        
-        bufOut_Fin_L[mFilter.j_0] = bufIn_Fin_L[mFilter.j_0] * mFilter.b_Ref[rad][0] + bufIn_Fin_L[mFilter.j_1] * mFilter.b_Ref[rad][1] + bufIn_Fin_L[mFilter.j_2] * mFilter.b_Ref[rad][2] + bufIn_Fin_L[mFilter.j_3] * mFilter.b_Ref[rad][3] - bufOut_Fin_L[mFilter.j_1] * mFilter.a_Ref[rad][0] - bufOut_Fin_L[mFilter.j_2] * mFilter.a_Ref[rad][1] - bufOut_Fin_L[mFilter.j_3] * mFilter.a_Ref[rad][2];
-        
-        bufOut_Fin_R[mFilter.j_0] = bufIn_Fin_R[mFilter.j_0] * mFilter.b_Ref[rad][0] + bufIn_Fin_R[mFilter.j_1] * mFilter.b_Ref[rad][1] + bufIn_Fin_R[mFilter.j_2] * mFilter.b_Ref[rad][2] + bufIn_Fin_R[mFilter.j_3] * mFilter.b_Ref[rad][3] - bufOut_Fin_R[mFilter.j_1] * mFilter.a_Ref[rad][0] - bufOut_Fin_R[mFilter.j_2] * mFilter.a_Ref[rad][1] - bufOut_Fin_R[mFilter.j_3] * mFilter.a_Ref[rad][2];
-        
-        double xL = bufOut_L[mFilter.i_0];
-        double xR = bufOut_R[mFilter.i_0];
-        double x_fin_L = bufOut_Fin_L[mFilter.j_0];
-        double x_fin_R = bufOut_Fin_R[mFilter.j_0];
-        
-        outL = inL * (1.0 - *dryWetMix_) + *dryWetMix_ * ((1-multitapDelay_) * (*gainLeft_ * mDelayLine.delayLineL(xL) + *gainRefLeft_ * mDelayLine.delayLine_Ref_L(x_fin_L)) + multitapDelay_ * (*gainLeft_* (mDelayLine.delayLineRepL(xL, tempoInSamples, *tempo_, *feedback_)) + *gainRefLeft_ * (mDelayLine.delayLineRep_Ref_L(x_fin_L, tempoInSamples, *tempo_, *feedback_))));
-        
-               
-        outR = inR * (1.0 - *dryWetMix_) + *dryWetMix_ * ((1-multitapDelay_) * (*gainRight_ * mDelayLine.delayLineR(xR) + *gainRefRight_ * mDelayLine.delayLine_Ref_R(x_fin_R)) + multitapDelay_ * (*gainRight_* (mDelayLine.delayLineRepR(xR, tempoInSamples, *tempo_, *feedback_)) + *gainRefRight_ * (mDelayLine.delayLineRep_Ref_R(x_fin_R, tempoInSamples, *tempo_, *feedback_))));
-        
+        outL = inL * (1.0 - wetValue_) + wetValue_ * ((1-multitapDelay_) * (interpolatedGain_L * mDelayLine.delayLine_L(xL) + currentGainRef_L * mDelayLine.delayLine_Ref_L(x_fin_L)) + multitapDelay_ * (interpolatedGain_L * (mDelayLine.delayLineRep_L(xL, tempoInSamples_L, currentFeedback)) + currentGainRef_L * (mDelayLine.delayLineRep_Ref_L(x_fin_L, tempoInSamples_L, currentFeedback))));
+    
+    
+        outR = inR * (1.0 - wetValue_) + wetValue_ * ((1-multitapDelay_) * (interpolatedGain_R * mDelayLine.delayLine_R(xR) + currentGainRef_R * mDelayLine.delayLine_Ref_R(x_fin_R)) + multitapDelay_ * (interpolatedGain_R * (mDelayLine.delayLineRep_R(xR, tempoInSamples_R, currentFeedback)) + currentGainRef_R * (mDelayLine.delayLineRep_Ref_R(x_fin_R, tempoInSamples_R, currentFeedback))));
+    
         channelDataL[i] = outL;
         channelDataR[i] = outR;
     
+        interpolatedGain_L += incrementGain_L;
+        interpolatedGain_R += incrementGain_R;
+        
+        interpolatedDelaySamples += incrementDelaySamples;
+        mDelayLine.setDelay_L(interpolatedDelaySamples);
     }
 
 
@@ -304,6 +346,120 @@ void VirtualTubeDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, M
     }
 }
 
+
+void VirtualTubeDelayAudioProcessor::applyDelay_L(int numSamples){
+    
+    incrementDelaySamples = (delaySamples_L - previousDelaySamples) / (float) numSamples;
+    interpolatedDelaySamples = previousDelaySamples;
+
+    previousDelaySamples = delaySamples_L;
+}
+
+
+void VirtualTubeDelayAudioProcessor::applyGain_L(int numSamples){
+    
+    incrementGain_L = (currentGain_L - previousGain_L) / (double) numSamples;
+    interpolatedGain_L = previousGain_L;
+    
+    previousGain_L = currentGain_L;
+}
+
+void VirtualTubeDelayAudioProcessor::applyGain_R(int numSamples){
+    
+    incrementGain_R = (currentGain_R - previousGain_R) / (double) numSamples;
+    interpolatedGain_R = previousGain_R;
+    
+    previousGain_R = currentGain_R;
+}
+
+void VirtualTubeDelayAudioProcessor::process() {
+    
+    i_0 = ptr%7;       //->6
+    i_1 = (ptr + 1)%7; //->0
+    i_2 = (ptr + 2)%7; //->1
+    i_3 = (ptr + 3)%7; //->2
+    i_4 = (ptr + 4)%7; //->3
+    i_5 = (ptr + 5)%7; //->4
+    i_6 = (ptr + 6)%7; //->5
+    
+    if (--ptr < 0) { ptr += 7; }
+    
+    j_0 = ptr2%4;       //->3
+    j_1 = (ptr2 + 1)%4; //->0
+    j_2 = (ptr2 + 2)%4; //->1
+    j_3 = (ptr2 + 3)%4; //->2
+    
+    if (--ptr2 < 0) { ptr2 += 4; }
+}
+
+
+double VirtualTubeDelayAudioProcessor::computeOutFilter_L(double input){
+ 
+    double inL = input;
+    double out;
+ 
+    bufIn_L[i_0] = inL;
+ 
+    bufOut_L[i_0] = bufIn_L[i_0] * mFilter.b0f_L + bufIn_L[i_1] * mFilter.b1f_L + bufIn_L[i_2] * mFilter.b2f_L + bufIn_L[i_3] * mFilter.b3f_L + bufIn_L[i_4] * mFilter.b4f_L + bufIn_L[i_5] * mFilter.b5f_L + bufIn_L[i_6] * mFilter.b6f_L - bufOut_L[i_1] * mFilter.a1f_L - bufOut_L[i_2] * mFilter.a2f_L - bufOut_L[i_3] * mFilter.a3f_L - bufOut_L[i_4] * mFilter.a4f_L - bufOut_L[i_5] * mFilter.a5f_L - bufOut_L[i_6] * mFilter.a6f_L;
+ 
+    out = bufOut_L[i_0];
+  
+ return out;
+ 
+ }
+
+double VirtualTubeDelayAudioProcessor::computeOutFilter_R(double input){
+    
+    double inR = input;
+    double out;
+    
+    bufIn_R[i_0] = inR;
+
+    bufOut_R[i_0] = bufIn_R[i_0] * mFilter.b0f_R + bufIn_R[i_1] * mFilter.b1f_R + bufIn_R[i_2] * mFilter.b2f_R + bufIn_R[i_3] * mFilter.b3f_R + bufIn_R[i_4] * mFilter.b4f_R + bufIn_R[i_5] * mFilter.b5f_R + bufIn_R[i_6] * mFilter.b6f_R - bufOut_R[i_1] * mFilter.a1f_R - bufOut_R[i_2] * mFilter.a2f_R - bufOut_R[i_3] * mFilter.a3f_R - bufOut_R[i_4] * mFilter.a4f_R - bufOut_R[i_5] * mFilter.a5f_R - bufOut_R[i_6] * mFilter.a6f_R;
+
+    out = bufOut_R[i_0];
+    
+    return out;
+    
+}
+
+ double VirtualTubeDelayAudioProcessor::computeOutReflectionFilter_L(double input){
+ 
+     double inL = input;
+     double out;
+ 
+     bufIn_Ref_L[i_0] = inL;
+  
+     bufOut_Ref_L[i_0] = bufIn_Ref_L[i_0] * mFilter.b0f_Ref_L + bufIn_Ref_L[i_1] * mFilter.b1f_Ref_L + bufIn_Ref_L[i_2] * mFilter.b2f_Ref_L + bufIn_Ref_L[i_3] * mFilter.b3f_Ref_L + bufIn_Ref_L[i_4] * mFilter.b4f_Ref_L + bufIn_Ref_L[i_5] * mFilter.b5f_Ref_L + bufIn_Ref_L[i_6] * mFilter.b6f_Ref_L - bufOut_Ref_L[i_1] * mFilter.a1f_Ref_L - bufOut_Ref_L[i_2] * mFilter.a2f_Ref_L - bufOut_Ref_L[i_3] * mFilter.a3f_Ref_L - bufOut_Ref_L[i_4] * mFilter.a4f_Ref_L - bufOut_Ref_L[i_5] * mFilter.a5f_Ref_L - bufOut_Ref_L[i_6] * mFilter.a6f_Ref_L;
+ 
+     bufIn_Fin_L[j_0] = bufOut_Ref_L[i_0];
+ 
+     bufOut_Fin_L[j_0] = bufIn_Fin_L[j_0] * mFilter.b_Ref[rad][0] + bufIn_Fin_L[j_1] * mFilter.b_Ref[rad][1] + bufIn_Fin_L[j_2] * mFilter.b_Ref[rad][2] + bufIn_Fin_L[j_3] * mFilter.b_Ref[rad][3] - bufOut_Fin_L[j_1] * mFilter.a_Ref[rad][0] - bufOut_Fin_L[j_2] * mFilter.a_Ref[rad][1] - bufOut_Fin_L[j_3] * mFilter.a_Ref[rad][2];
+ 
+     out = bufOut_Fin_L[j_0];
+ 
+     return out;
+ 
+ }
+
+double VirtualTubeDelayAudioProcessor::computeOutReflectionFilter_R(double input){
+
+    double inR = input;
+    double out;
+
+    bufIn_Ref_R[i_0] = inR;
+
+    bufOut_Ref_R[i_0] = bufIn_Ref_R[i_0] * mFilter.b0f_Ref_R + bufIn_Ref_R[i_1] * mFilter.b1f_Ref_R + bufIn_Ref_R[i_2] * mFilter.b2f_Ref_R + bufIn_Ref_R[i_3] * mFilter.b3f_Ref_R + bufIn_Ref_R[i_4] * mFilter.b4f_Ref_R + bufIn_Ref_R[i_5] * mFilter.b5f_Ref_R + bufIn_Ref_R[i_6] * mFilter.b6f_Ref_R - bufOut_Ref_R[i_1] * mFilter.a1f_Ref_R - bufOut_Ref_R[i_2] * mFilter.a2f_Ref_R - bufOut_Ref_R[i_3] * mFilter.a3f_Ref_R - bufOut_Ref_R[i_4] * mFilter.a4f_Ref_R - bufOut_Ref_R[i_5] * mFilter.a5f_Ref_R - bufOut_Ref_R[i_6] * mFilter.a6f_Ref_R;
+
+    bufIn_Fin_R[j_0] = bufOut_Ref_R[i_0];
+
+    bufOut_Fin_R[j_0] = bufIn_Fin_R[j_0] * mFilter.b_Ref[rad][0] + bufIn_Fin_R[j_1] * mFilter.b_Ref[rad][1] + bufIn_Fin_R[j_2] * mFilter.b_Ref[rad][2] + bufIn_Fin_R[j_3] * mFilter.b_Ref[rad][3] - bufOut_Fin_R[j_1] * mFilter.a_Ref[rad][0] - bufOut_Fin_R[j_2] * mFilter.a_Ref[rad][1] - bufOut_Fin_R[j_3] * mFilter.a_Ref[rad][2];
+    
+    out = bufOut_Fin_R[j_0];
+    
+    return out;
+    
+}
 
 //==============================================================================
 bool VirtualTubeDelayAudioProcessor::hasEditor() const

@@ -234,29 +234,10 @@ public:
     b3f_R(0.0035067498850163384),
     b4f_R(0.00049099029470241347),
     b5f_R(-0.0017872423055908145),
-    b6f_R(0.00054113344012696836),
-    
-    ptr(0),
-    ptr2(0),
-    
-    i_0(0),
-    i_1(0),
-    i_2(0),
-    i_3(0),
-    i_4(0),
-    i_5(0),
-    i_6(0),
-    
-    j_0(0),
-    j_1(0),
-    j_2(0),
-    j_3(0)
-   
+    b6f_R(0.00054113344012696836)
     {initializeMatrix();};
     
     void setSampleRate(double sampleRate){ mSampleRate = sampleRate;}
-    
-    void process();
     
     inline double setLengt(float lengthInput) {
         return (double)((long)floor(lengthInput*100))/100; };
@@ -270,8 +251,7 @@ public:
     void getCalculatedCoefficients(int side);
     
     void getCalculatedCoefficients_Ref(int side);
-
-
+    
     void initializeMatrix(){
         //reflection filter coefficients matrix
         a_Ref = new double*[14];
@@ -424,19 +404,6 @@ public:
 
     }
 
-    int i_0;
-    int i_1;
-    int i_2;
-    int i_3;
-    int i_4;
-    int i_5;
-    int i_6;
-    
-    int j_0;
-    int j_1;
-    int j_2;
-    int j_3;
-
     double a1f_L;
     double a2f_L;
     double a3f_L;
@@ -531,9 +498,6 @@ private:
     double b2LP;
     
     double mSampleRate;
-
-    int ptr;
-    int ptr2;
 
 };
 

@@ -82,48 +82,92 @@ public:
     float* gainRight_ = nullptr;
     float* dryWetMix_ = nullptr; // Mix level of original and delayed signal (0-1)
     float* tubeSize_ = nullptr; // Size of the tube (1.2-2.5 cm)
-
-    int multitapDelay_;
-    bool multitap_;
     
-    float* tubeLengthRefLeft_ = nullptr; // Tube length in m
-    float* tubeLengthRefRight_ = nullptr;
+    float* tubeEndLeft_ = nullptr; // Tube length in m
+    float* tubeEndRight_ = nullptr;
     float* gainRefLeft_ = nullptr; // Gain
     float* gainRefRight_ = nullptr;
  
+    int multitapDelay_;
+    float* multitap_ = nullptr;
+
+    float* feedback_ = nullptr;
+    float* tempo_ = nullptr;
+    float* sync_ = nullptr;
+    
+    float tempoBpm_;
+    float beatLenghtInSec;
+    float beatLenghtInSamples;
+    float tempoInSamples_L;
+    float tempoInSamples_R;
+
     
     int rad;
-    double leng_L;
-    double delayMilli_L;
-    double delaySamples_L;
+    float leng_L;
+    float delayMilli_L;
+    float delaySamples_L;
     
-    double leng_R;
-    double delayMilli_R;
-    double delaySamples_R;
+    float leng_R;
+    float delayMilli_R;
+    float delaySamples_R;
     
-    double lengRef_L;
-    double delayMilliRef_L;
-    double delaySamplesRef_L;
+    float lengRef_L;
+    float delayMilliRef_L;
+    float delaySamplesRef_L;
     
-    double lengRef_R;
-    double delayMilliRef_R;
-    double delaySamplesRef_R;
+    float lengRef_R;
+    float delayMilliRef_R;
+    float delaySamplesRef_R;
     
     Filter mFilter;
     DelayLine mDelayLine;
         
-    float* feedback_ = nullptr;
-    double damp_;
-    float* tempo_ = nullptr;
-    double tempoBpm_;
-    double beatLenghtInSec;
-    double beatLenghtInSamples;
-    double tempoInSamples;
-    bool sync_;// = nullptr;
     
     AudioProcessorValueTreeState parameters;
-       
+    
+    void process();
+    double computeOutFilter_L(double input);
+    double computeOutFilter_R(double input);
+    double computeOutReflectionFilter_L(double input);
+    double computeOutReflectionFilter_R(double input);
+    void applyGain_L(int numSamples);
+    void applyGain_R(int numSamples);
+    void applyDelay_L(int numSamples);
+    
 private:
+    
+    float previousGain_L;
+    float interpolatedGain_L;
+    float incrementGain_L;
+    
+    float previousGain_R;
+    float interpolatedGain_R;
+    float incrementGain_R;
+    
+    float previousDelaySamples;
+    float interpolatedDelaySamples;
+    float incrementDelaySamples;
+    
+    float currentGain_L;
+    float currentGain_R;
+    float currentGainRef_L;
+    float currentGainRef_R;
+    
+    int ptr;
+    int ptr2;
+
+    int i_0;
+    int i_1;
+    int i_2;
+    int i_3;
+    int i_4;
+    int i_5;
+    int i_6;
+    
+    int j_0;
+    int j_1;
+    int j_2;
+    int j_3;
     
     int delayBufferLength_;
     int delayBufferLengthRef_;

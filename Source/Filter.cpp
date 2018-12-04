@@ -11,27 +11,6 @@
 #include "Filter.h"
 
 
-void Filter::process() {
-    
-        i_0 = ptr%7;       //->6
-        i_1 = (ptr + 1)%7; //->0
-        i_2 = (ptr + 2)%7; //->1
-        i_3 = (ptr + 3)%7; //->2
-        i_4 = (ptr + 4)%7; //->3
-        i_5 = (ptr + 5)%7; //->4
-        i_6 = (ptr + 6)%7; //->5
-        
-        if (--ptr < 0) { ptr += 7; }
-    
-        j_0 = ptr2%4;       //->3
-        j_1 = (ptr2 + 1)%4; //->0
-        j_2 = (ptr2 + 2)%4; //->1
-        j_3 = (ptr2 + 3)%4; //->2
-    
-        if (--ptr2 < 0) { ptr2 += 4; }
-}
-
-
 void Filter::setValues(float tubeLength, double tubeSize) {
     
     double lengt = setLengt(tubeLength);
