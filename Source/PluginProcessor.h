@@ -130,10 +130,9 @@ public:
     double computeOutFilter_R(double input);
     double computeOutReflectionFilter_L(double input);
     double computeOutReflectionFilter_R(double input);
-    void applyGain_L(int numSamples);
-    void applyGain_R(int numSamples);
-    void applyDelay_L(int numSamples);
-    void applyDelay_R(int numSamples);
+    void applyGain(int numSamples);
+    void applyFilterDelay_L(int numSamples);
+    void applyFilterDelay_R(int numSamples);
     
 private:
     

@@ -82,7 +82,7 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     tubeLengthLeftSlider_.setPopupDisplayEnabled(true, false, this);
     tubeLengthLeftSlider_.setTextValueSuffix(" m");
     tubeLengthLeftSlider_.setDoubleClickReturnValue(true, 10.0);
-    tubeLengthLeftSlider_.setChangeNotificationOnlyOnRelease(true);
+    //tubeLengthLeftSlider_.setChangeNotificationOnlyOnRelease(true);
     addAndMakeVisible (&tubeLengthLeftSlider_);
     tubeLengthLeftSlider_.addListener(this);
     
@@ -137,7 +137,7 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     tubeEndLeftSlider_.setPopupDisplayEnabled(true, false, this);
     tubeEndLeftSlider_.setTextValueSuffix(" m");
     tubeEndLeftSlider_.setDoubleClickReturnValue(true, 10.0);
-    tubeEndLeftSlider_.setChangeNotificationOnlyOnRelease(true);
+    //tubeEndLeftSlider_.setChangeNotificationOnlyOnRelease(true);
     addAndMakeVisible (&tubeEndLeftSlider_);
     tubeEndLeftSlider_.addListener(this);
     
@@ -147,7 +147,7 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     tubeEndRightSlider_.setPopupDisplayEnabled (true, false, this);
     tubeEndRightSlider_.setTextValueSuffix(" m");
     tubeEndRightSlider_.setDoubleClickReturnValue(true, 10.0);
-    tubeEndRightSlider_.setChangeNotificationOnlyOnRelease(true);
+    //tubeEndRightSlider_.setChangeNotificationOnlyOnRelease(true);
     addAndMakeVisible (&tubeEndRightSlider_);
     tubeEndRightSlider_.addListener(this);
     
@@ -181,7 +181,6 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     gainRightLabel_.attachToComponent(&gainRightSlider_, false);
     gainRightLabel_.setFont(Font (14.0f));
     
-    //gainLeftLabel_.setColour(1, Colours::black);
     tubeSizeLabel_.attachToComponent(&tubeSizeSlider_, false);
     tubeSizeLabel_.setFont(Font (14.0f));
     
@@ -200,10 +199,7 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     gainRefRightLabel_.attachToComponent(&gainRefRightSlider_, false);
     gainRefRightLabel_.setFont(Font (14.0f));
     
-    //enabledReflectionToggleButton_.setRadioGroupId(0, sendNotification);
-    //enabledRepeatedDelayToggleButton_.setRadioGroupId(0, sendNotification);
-    
-    //repeated
+    //multitap
     
     feedbackSlider_.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     feedbackSlider_.setRange (0.1, 0.9, 0.01);
@@ -311,46 +307,34 @@ void VirtualTubeDelayAudioProcessorEditor::sliderValueChanged (Slider* slider)
     {
         *processor.tubeLengthLeft_ = tubeLengthLeftSlider_.getValue();
         
-        /*processor.leng_L = processor.mFilter.setLengt(*processor.tubeLengthLeft_);
+        processor.leng_L = processor.mFilter.setLengt(*processor.tubeLengthLeft_);
         processor.delayMilli_L = processor.mFilter.setDelayMilliseconds(processor.leng_L);
-        processor.delaySamples_L = processor.mFilter.setDelaySamples(processor.delayMilli_L);
-        
-        processor.mFilter.setValues(*processor.tubeLengthLeft_, processor.rad);
-        processor.mFilter.getCalculatedCoefficients(0);*/
         
         std::string delayText = createTextForDelays(processor.delayMilli_L);
         delayMsL_.setText(delayText);
         
-        //changing the end distance
-        /*processor.lengRef_L = processor.leng_L + processor.mFilter.setLengt(2* (*processor.tubeEndLeft_));
+        processor.lengRef_L = processor.leng_L + processor.mFilter.setLengt(*processor.tubeEndLeft_);
         processor.delayMilliRef_L = processor.mFilter.setDelayMilliseconds(processor.lengRef_L);
-        processor.delaySamplesRef_L = processor.mFilter.setDelaySamples(processor.delayMilliRef_L);
         
-        processor.mFilter.setValues(2* (*processor.tubeEndLeft_), processor.rad);
-        processor.mFilter.getCalculatedCoefficients_Ref(0);*/
+        std::string delayTextRef = createTextForDelays(processor.delayMilliRef_L);
+        delayMsRefL_.setText(delayTextRef);
        
     }
     else if (slider == &tubeLengthRightSlider_)
     {
         *processor.tubeLengthRight_ = tubeLengthRightSlider_.getValue();
         
-        /*processor.leng_R = processor.mFilter.setLengt(*processor.tubeLengthRight_);
+        processor.leng_R = processor.mFilter.setLengt(*processor.tubeLengthRight_);
         processor.delayMilli_R = processor.mFilter.setDelayMilliseconds(processor.leng_R);
-        processor.delaySamples_R = processor.mFilter.setDelaySamples(processor.delayMilli_R);
-        
-        processor.mFilter.setValues(*processor.tubeLengthRight_, processor.rad);
-        processor.mFilter.getCalculatedCoefficients(1);*/
         
         std::string delayText = createTextForDelays(processor.delayMilli_R);
         delayMsR_.setText(delayText);
         
-        //changing the end distance
-        /*processor.lengRef_R = processor.leng_R + processor.mFilter.setLengt(2* (*processor.tubeEndRight_));
+        processor.lengRef_R = processor.leng_R + processor.mFilter.setLengt(*processor.tubeEndRight_);
         processor.delayMilliRef_R = processor.mFilter.setDelayMilliseconds(processor.lengRef_R);
-        processor.delaySamplesRef_R = processor.mFilter.setDelaySamples(processor.delayMilliRef_R);
         
-        processor.mFilter.setValues(2* (*processor.tubeEndRight_), processor.rad);
-        processor.mFilter.getCalculatedCoefficients_Ref(1);*/
+        std::string delayTextRef = createTextForDelays(processor.delayMilliRef_R);
+        delayMsRefR_.setText(delayTextRef);
         
     }
     else if (slider == &gainLeftSlider_)
@@ -370,28 +354,15 @@ void VirtualTubeDelayAudioProcessorEditor::sliderValueChanged (Slider* slider)
         *processor.tubeSize_ = tubeSizeSlider_.getValue();
         
         processor.rad = floor(*processor.tubeSize_*10 - 12);
-        /*processor.mFilter.setValues(*processor.tubeLengthLeft_, processor.rad);
-        processor.mFilter.getCalculatedCoefficients(0);
-        processor.mFilter.setValues(*processor.tubeLengthRight_, processor.rad);
-        processor.mFilter.getCalculatedCoefficients(1);
-        //changing ref
-        processor.mFilter.setValues(2* (*processor.tubeEndLeft_), processor.rad);
-        processor.mFilter.getCalculatedCoefficients_Ref(0);
-        processor.mFilter.setValues(2* (*processor.tubeEndRight_), processor.rad);
-        processor.mFilter.getCalculatedCoefficients_Ref(1);*/
-        
+ 
     }
     else if (slider == &tubeEndLeftSlider_)
     {
         *processor.tubeEndLeft_ = tubeEndLeftSlider_.getValue();
         
-        /*processor.lengRef_L = processor.leng_L + processor.mFilter.setLengt(2* (*processor.tubeEndLeft_));
+        processor.lengRef_L = processor.leng_L + processor.mFilter.setLengt(*processor.tubeEndLeft_);
         processor.delayMilliRef_L = processor.mFilter.setDelayMilliseconds(processor.lengRef_L);
-        processor.delaySamplesRef_L = processor.mFilter.setDelaySamples(processor.delayMilliRef_L);
-     
-        processor.mFilter.setValues(2* (*processor.tubeEndLeft_), processor.rad);
-        processor.mFilter.getCalculatedCoefficients_Ref(0);*/
-
+        
         std::string delayText = createTextForDelays(processor.delayMilliRef_L);
         delayMsRefL_.setText(delayText);
         
@@ -400,12 +371,8 @@ void VirtualTubeDelayAudioProcessorEditor::sliderValueChanged (Slider* slider)
     {
         *processor.tubeEndRight_ = tubeEndRightSlider_.getValue();
         
-        /*processor.lengRef_R = processor.leng_R + processor.mFilter.setLengt(2* (*processor.tubeEndRight_));
+        processor.lengRef_R = processor.leng_R + processor.mFilter.setLengt(*processor.tubeEndRight_);
         processor.delayMilliRef_R = processor.mFilter.setDelayMilliseconds(processor.lengRef_R);
-        processor.delaySamplesRef_R = processor.mFilter.setDelaySamples(processor.delayMilliRef_R);
-        
-        processor.mFilter.setValues(2* (*processor.tubeEndRight_), processor.rad);
-        processor.mFilter.getCalculatedCoefficients_Ref(1);*/
         
         std::string delayText = createTextForDelays(processor.delayMilliRef_R);
         delayMsRefR_.setText(delayText);
