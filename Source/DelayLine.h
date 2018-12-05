@@ -35,7 +35,27 @@ public:
     fracDelaySamplesLeft_Ref(0.0),
     fracDelaySamplesRight_Ref(0.0){initialize();};
     
-    ~DelayLine(){};
+    ~DelayLine(){
+    
+        delete delayBufferLeft_;
+        delete delayBufferRight_;
+        
+        delete delayBufferLeftRef_;
+        delete delayBufferRightRef_;
+        
+        //delete rptrLeft; // read ptr
+        //delete wptrLeft; // write ptr
+        
+        //delete rptrRight; // read ptr
+        //delete wptrRight; // write ptr
+        
+        //delete rptrLeft_Ref;
+        //delete rptrRight_Ref;
+        
+        //delete wptrLeft_Ref;
+        //delete wptrRight_Ref;
+    
+    };
     
     void setDelay_L(double samples);
     void setDelay_R(double samples);

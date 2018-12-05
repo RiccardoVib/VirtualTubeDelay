@@ -82,7 +82,7 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     tubeLengthLeftSlider_.setPopupDisplayEnabled(true, false, this);
     tubeLengthLeftSlider_.setTextValueSuffix(" m");
     tubeLengthLeftSlider_.setDoubleClickReturnValue(true, 10.0);
-    //tubeLengthLeftSlider_.setChangeNotificationOnlyOnRelease(true);
+    tubeLengthLeftSlider_.setChangeNotificationOnlyOnRelease(true);
     addAndMakeVisible (&tubeLengthLeftSlider_);
     tubeLengthLeftSlider_.addListener(this);
     
@@ -92,7 +92,7 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     tubeLengthRightSlider_.setPopupDisplayEnabled (true, false, this);
     tubeLengthRightSlider_.setTextValueSuffix(" m");
     tubeLengthRightSlider_.setDoubleClickReturnValue(true, 10.0);
-    tubeLengthRightSlider_.setChangeNotificationOnlyOnRelease(true);
+    //tubeLengthRightSlider_.setChangeNotificationOnlyOnRelease(true);
     addAndMakeVisible (&tubeLengthRightSlider_);
     tubeLengthRightSlider_.addListener(this);
     
@@ -311,46 +311,46 @@ void VirtualTubeDelayAudioProcessorEditor::sliderValueChanged (Slider* slider)
     {
         *processor.tubeLengthLeft_ = tubeLengthLeftSlider_.getValue();
         
-        processor.leng_L = processor.mFilter.setLengt(*processor.tubeLengthLeft_);
+        /*processor.leng_L = processor.mFilter.setLengt(*processor.tubeLengthLeft_);
         processor.delayMilli_L = processor.mFilter.setDelayMilliseconds(processor.leng_L);
         processor.delaySamples_L = processor.mFilter.setDelaySamples(processor.delayMilli_L);
         
         processor.mFilter.setValues(*processor.tubeLengthLeft_, processor.rad);
-        processor.mFilter.getCalculatedCoefficients(0);
+        processor.mFilter.getCalculatedCoefficients(0);*/
         
         std::string delayText = createTextForDelays(processor.delayMilli_L);
         delayMsL_.setText(delayText);
         
         //changing the end distance
-        processor.lengRef_L = processor.leng_L + processor.mFilter.setLengt(2* (*processor.tubeEndLeft_));
+        /*processor.lengRef_L = processor.leng_L + processor.mFilter.setLengt(2* (*processor.tubeEndLeft_));
         processor.delayMilliRef_L = processor.mFilter.setDelayMilliseconds(processor.lengRef_L);
         processor.delaySamplesRef_L = processor.mFilter.setDelaySamples(processor.delayMilliRef_L);
         
         processor.mFilter.setValues(2* (*processor.tubeEndLeft_), processor.rad);
-        processor.mFilter.getCalculatedCoefficients_Ref(0);
+        processor.mFilter.getCalculatedCoefficients_Ref(0);*/
        
     }
     else if (slider == &tubeLengthRightSlider_)
     {
         *processor.tubeLengthRight_ = tubeLengthRightSlider_.getValue();
         
-        processor.leng_R = processor.mFilter.setLengt(*processor.tubeLengthRight_);
+        /*processor.leng_R = processor.mFilter.setLengt(*processor.tubeLengthRight_);
         processor.delayMilli_R = processor.mFilter.setDelayMilliseconds(processor.leng_R);
         processor.delaySamples_R = processor.mFilter.setDelaySamples(processor.delayMilli_R);
         
         processor.mFilter.setValues(*processor.tubeLengthRight_, processor.rad);
-        processor.mFilter.getCalculatedCoefficients(1);
+        processor.mFilter.getCalculatedCoefficients(1);*/
         
         std::string delayText = createTextForDelays(processor.delayMilli_R);
         delayMsR_.setText(delayText);
         
         //changing the end distance
-        processor.lengRef_R = processor.leng_R + processor.mFilter.setLengt(2* (*processor.tubeEndRight_));
+        /*processor.lengRef_R = processor.leng_R + processor.mFilter.setLengt(2* (*processor.tubeEndRight_));
         processor.delayMilliRef_R = processor.mFilter.setDelayMilliseconds(processor.lengRef_R);
         processor.delaySamplesRef_R = processor.mFilter.setDelaySamples(processor.delayMilliRef_R);
         
         processor.mFilter.setValues(2* (*processor.tubeEndRight_), processor.rad);
-        processor.mFilter.getCalculatedCoefficients_Ref(1);
+        processor.mFilter.getCalculatedCoefficients_Ref(1);*/
         
     }
     else if (slider == &gainLeftSlider_)
@@ -370,7 +370,7 @@ void VirtualTubeDelayAudioProcessorEditor::sliderValueChanged (Slider* slider)
         *processor.tubeSize_ = tubeSizeSlider_.getValue();
         
         processor.rad = floor(*processor.tubeSize_*10 - 12);
-        processor.mFilter.setValues(*processor.tubeLengthLeft_, processor.rad);
+        /*processor.mFilter.setValues(*processor.tubeLengthLeft_, processor.rad);
         processor.mFilter.getCalculatedCoefficients(0);
         processor.mFilter.setValues(*processor.tubeLengthRight_, processor.rad);
         processor.mFilter.getCalculatedCoefficients(1);
@@ -378,19 +378,19 @@ void VirtualTubeDelayAudioProcessorEditor::sliderValueChanged (Slider* slider)
         processor.mFilter.setValues(2* (*processor.tubeEndLeft_), processor.rad);
         processor.mFilter.getCalculatedCoefficients_Ref(0);
         processor.mFilter.setValues(2* (*processor.tubeEndRight_), processor.rad);
-        processor.mFilter.getCalculatedCoefficients_Ref(1);
+        processor.mFilter.getCalculatedCoefficients_Ref(1);*/
         
     }
     else if (slider == &tubeEndLeftSlider_)
     {
         *processor.tubeEndLeft_ = tubeEndLeftSlider_.getValue();
         
-        processor.lengRef_L = processor.leng_L + processor.mFilter.setLengt(2* (*processor.tubeEndLeft_));
+        /*processor.lengRef_L = processor.leng_L + processor.mFilter.setLengt(2* (*processor.tubeEndLeft_));
         processor.delayMilliRef_L = processor.mFilter.setDelayMilliseconds(processor.lengRef_L);
         processor.delaySamplesRef_L = processor.mFilter.setDelaySamples(processor.delayMilliRef_L);
      
         processor.mFilter.setValues(2* (*processor.tubeEndLeft_), processor.rad);
-        processor.mFilter.getCalculatedCoefficients_Ref(0);
+        processor.mFilter.getCalculatedCoefficients_Ref(0);*/
 
         std::string delayText = createTextForDelays(processor.delayMilliRef_L);
         delayMsRefL_.setText(delayText);
@@ -400,12 +400,12 @@ void VirtualTubeDelayAudioProcessorEditor::sliderValueChanged (Slider* slider)
     {
         *processor.tubeEndRight_ = tubeEndRightSlider_.getValue();
         
-        processor.lengRef_R = processor.leng_R + processor.mFilter.setLengt(2* (*processor.tubeEndRight_));
+        /*processor.lengRef_R = processor.leng_R + processor.mFilter.setLengt(2* (*processor.tubeEndRight_));
         processor.delayMilliRef_R = processor.mFilter.setDelayMilliseconds(processor.lengRef_R);
         processor.delaySamplesRef_R = processor.mFilter.setDelaySamples(processor.delayMilliRef_R);
         
         processor.mFilter.setValues(2* (*processor.tubeEndRight_), processor.rad);
-        processor.mFilter.getCalculatedCoefficients_Ref(1);
+        processor.mFilter.getCalculatedCoefficients_Ref(1);*/
         
         std::string delayText = createTextForDelays(processor.delayMilliRef_R);
         delayMsRefR_.setText(delayText);

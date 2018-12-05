@@ -133,9 +133,15 @@ public:
     void applyGain_L(int numSamples);
     void applyGain_R(int numSamples);
     void applyDelay_L(int numSamples);
+    void applyDelay_R(int numSamples);
     
 private:
     
+    float currentGain_L;
+    float currentGain_R;
+    float currentGainRef_L;
+    float currentGainRef_R;
+ 
     float previousGain_L;
     float interpolatedGain_L;
     float incrementGain_L;
@@ -144,14 +150,51 @@ private:
     float interpolatedGain_R;
     float incrementGain_R;
     
-    float previousDelaySamples;
-    float interpolatedDelaySamples;
-    float incrementDelaySamples;
+    float previousGainRef_L;
+    float interpolatedGainRef_L;
+    float incrementGainRef_L;
     
-    float currentGain_L;
-    float currentGain_R;
-    float currentGainRef_L;
-    float currentGainRef_R;
+    float previousGainRef_R;
+    float interpolatedGainRef_R;
+    float incrementGainRef_R;
+    
+    float previousDelaySamples_L;
+    float interpolatedDelaySamples_L;
+    float incrementDelaySamples_L;
+    
+    float previousDelaySamples_R;
+    float interpolatedDelaySamples_R;
+    float incrementDelaySamples_R;
+    
+    float previousDelaySamplesRef_L;
+    float interpolatedDelaySamplesRef_L;
+    float incrementDelaySamplesRef_L;
+    
+    float previousDelaySamplesRef_R;
+    float interpolatedDelaySamplesRef_R;
+    float incrementDelaySamplesRef_R;
+    
+    float tubeLengthLeft;
+    float tubeLengthRight;
+    float tubeEndLeft;
+    float tubeEndRight;
+    
+    float previousTubeLength_L;
+    float interpolatedTubeLength_L;
+    float incrementTubeLength_L;
+    
+    float previousTubeLength_R;
+    float interpolatedTubeLength_R;
+    float incrementTubeLength_R;
+    
+    float previousTubeEnd_L;
+    float interpolatedTubeEnd_L;
+    float incrementTubeEnd_L;
+    
+    float previousTubeEnd_R;
+    float interpolatedTubeEnd_R;
+    float incrementTubeEnd_R;
+
     
     int ptr;
     int ptr2;

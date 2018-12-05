@@ -237,6 +237,22 @@ public:
     b6f_R(0.00054113344012696836)
     {initializeMatrix();};
     
+    ~Filter(){
+        
+        for (int i = 0; i < 14; ++i){
+            delete [] a_Ref[i];
+        }
+    
+        delete a_Ref;
+        
+        for (int i = 0; i < 14; ++i){
+            delete [] b_Ref[i];
+            
+        }
+        delete b_Ref;
+
+    };
+    
     void setSampleRate(double sampleRate){ mSampleRate = sampleRate;}
     
     inline double setLengt(float lengthInput) {

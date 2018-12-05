@@ -44,6 +44,7 @@
       allowLocationSimulation = "YES">
       <PathRunnable
          runnableDebuggingMode = "0"
+         BundleIdentifier = "com.cockos.reaper"
          FilePath = "/Applications/REAPER64.app">
       </PathRunnable>
       <MacroExpansion>
@@ -59,10 +60,6 @@
          <CommandLineArgument
             argument = "/Users/riccardosimionato/plugin-development/reaper-project.RPP"
             isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "/Users/riccardosimionato/VirtualTubeDelay/Builds/MacOSX/build/Debug/VirtualTubeDelay.vst3"
-            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
