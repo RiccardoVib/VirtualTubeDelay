@@ -29,9 +29,10 @@ VirtualTubeDelayAudioProcessor::VirtualTubeDelayAudioProcessor()
     parameters.createAndAddParameter("gainRefLeft_", "gainRefLeft", "gainRefLeft", NormalisableRange<float>(0,18), 4, nullptr, nullptr);
     parameters.createAndAddParameter("gainRefRight_", "gainRefRight", "gainRefRight", NormalisableRange<float>(0,18), 4, nullptr, nullptr);
     parameters.createAndAddParameter("feedback_", "feedback", "feedback", NormalisableRange<float>(0.1,0.9), 0.1, nullptr, nullptr);
-    parameters.createAndAddParameter("tempo_", "tempo", "tempo", NormalisableRange<float>(1,32), 1, nullptr, nullptr);
+    parameters.createAndAddParameter("tempo_", "tempo", "tempo", NormalisableRange<float>(2,32), 2, nullptr, nullptr);
     parameters.createAndAddParameter("multitap_", "multitap", "multitap", NormalisableRange<float>(0,1), false, nullptr, nullptr, true);
     parameters.createAndAddParameter("sync_", "sync", "sync", NormalisableRange<float>(0,1), false, nullptr, nullptr, true);
+    
     
     parameters.state = ValueTree("SavedParams");
     
@@ -66,8 +67,6 @@ VirtualTubeDelayAudioProcessor::VirtualTubeDelayAudioProcessor()
     delaySamplesRef_R = 1533.913043478260;
 
     tempoBpm_ = 120;
-    beatLenghtInSec = 2;
-    beatLenghtInSamples = 88200;
 
     //addParameter (tubeLengthLeft_ = new AudioParameterFloat ("tubeLengthLeft_", "TubeLength Left", 1.0f, 30.0f, 10.0f));
     //addParameter (gainLeft_     = new AudioParameterFloat ("gainLeft_",     "Gain Left",     0.0f, 10.0f, 5.0f));
@@ -185,8 +184,6 @@ void VirtualTubeDelayAudioProcessor::prepareToPlay (double sampleRate, int sampl
     
     beatLenghtInSec = tempoBpm_/60;
     beatLenghtInSamples = beatLenghtInSec * getSampleRate();
-    tempoInSamples_L = delaySamples_L;
-    tempoInSamples_R = delaySamples_R;
     
     //auto tubeLengthLeft_Copy = tubeLengthLeft_->get();
     
@@ -241,6 +238,7 @@ void VirtualTubeDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, M
     bool sync = *sync_;
     float wetValue_ = *dryWetMix_;
     float currentFeedback = *feedback_;
+    int tempo = *tempo_;
     
     rad = floor(*tubeSize_*10 - 12);
     
@@ -254,57 +252,39 @@ void VirtualTubeDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, M
     tubeEndLeft = *tubeEndLeft_ *2;
     tubeEndRight = *tubeEndRight_ *2;
     
+        
+    tempoBpm_ = currentPositionInfo.bpm;
+    beatLenghtInSec = tempoBpm_/60;
+    beatLenghtInSamples = beatLenghtInSec * getSampleRate();
+    tempoInSample_L = 2 * beatLenghtInSamples/ tempo;
+    tempoInSample_R = 2 * beatLenghtInSamples/ tempo;
+    
+        
     //computing delay samples
     leng_L = mFilter.setLengt(tubeLengthLeft);
     delayMilli_L = mFilter.setDelayMilliseconds(leng_L);
     delaySamples_L = mFilter.setDelaySamples(delayMilli_L);
-    
+        
     leng_R = mFilter.setLengt(tubeLengthRight);
     delayMilli_R = mFilter.setDelayMilliseconds(leng_R);
     delaySamples_R = mFilter.setDelaySamples(delayMilli_R);
- 
+        
     //computing delay samples (reflection)
     lengRef_L = leng_L + mFilter.setLengt(tubeEndLeft);
     delayMilliRef_L = mFilter.setDelayMilliseconds(lengRef_L);
     delaySamplesRef_L = mFilter.setDelaySamples(delayMilliRef_L);
-    
+        
     lengRef_R = leng_R + mFilter.setLengt(tubeEndRight);
     delayMilliRef_R = mFilter.setDelayMilliseconds(lengRef_R);
     delaySamplesRef_R = mFilter.setDelaySamples(delayMilliRef_R);
-
-    if(sync){
-        
-        tempoBpm_ = currentPositionInfo.bpm;
-        beatLenghtInSec = tempoBpm_/60;
-        beatLenghtInSamples = beatLenghtInSec * getSampleRate();
-        tempoInSamples_L = beatLenghtInSamples/ *tempo_;
-        tempoInSamples_R = beatLenghtInSamples/ *tempo_;
-        
-    }else{
-        
-        tempoInSamples_L = delaySamples_L;
-        tempoInSamples_R = delaySamples_R;
-        
-    }
     
-    /*if(multitapDelay_ == 1){
-        
-        mDelayLine.setDelay_L(tempoInSamples_L);
-        mDelayLine.setDelay_R(tempoInSamples_R);
-        mDelayLine.setDelay_Ref_L(tempoInSamples_L);
-        mDelayLine.setDelay_Ref_R(tempoInSamples_R);
-        
-    }else{*/
-        
-        applyFilterDelay_L(numSamples);
-        applyFilterDelay_R(numSamples);
-        
-        mDelayLine.setDelay_L(interpolatedDelaySamples_L);
-        mDelayLine.setDelay_R(interpolatedDelaySamples_R);
-        mDelayLine.setDelay_Ref_L(interpolatedDelaySamplesRef_L);
-        mDelayLine.setDelay_Ref_R(interpolatedDelaySamplesRef_R);
-        
-    //}
+    applyFilterDelay_L(numSamples);
+    applyFilterDelay_R(numSamples);
+    
+    mDelayLine.setDelay_L(interpolatedDelaySamples_L);
+    mDelayLine.setDelay_R(interpolatedDelaySamples_R);
+    mDelayLine.setDelay_Ref_L(interpolatedDelaySamplesRef_L);
+    mDelayLine.setDelay_Ref_R(interpolatedDelaySamplesRef_R);
     
     applyGain(numSamples);
     
@@ -335,42 +315,38 @@ void VirtualTubeDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, M
         
         const double inL = channelDataL[i];
         const double inR = channelDataR[i];
+        
         double outL = 0.0;
         double outR = 0.0;
         
-        outL = computeOutFilter_L(inL);
-        double xL = outL;
+        double xL = computeOutFilter_L(inL);
+        double xR = computeOutFilter_R(inR);
         
-        outR = computeOutFilter_R(inR);
-        double xR = outR;
+        double x_fin_L = computeOutReflectionFilter_L(outL);
+        double x_fin_R = computeOutReflectionFilter_R(outR);
         
-        double outFinL = computeOutReflectionFilter_L(outL);
-        double x_fin_L = outFinL;
         
-        double outFinR = computeOutReflectionFilter_R(outR);
-        double x_fin_R = outFinR;
+        double multitapOutL = interpolatedGain_L * (mDelayLine.delayLineRep_L(xL, interpolatedDelaySamples_L, currentFeedback)) + interpolatedGainRef_L * (mDelayLine.delayLineRep_Ref_L(x_fin_L, interpolatedDelaySamplesRef_L, currentFeedback));
         
-        if(multitapDelay_ == 0){
+        double syncOutL = interpolatedGain_L * (mDelayLine.delayLineRep_L(xL, tempoInSample_L, currentFeedback)) + interpolatedGainRef_L * (mDelayLine.delayLineRep_Ref_L(x_fin_L, tempoInSample_L, currentFeedback));
+        
+        double delayOutL = interpolatedGain_L  * mDelayLine.delayLine_L(xL) + interpolatedGainRef_L * mDelayLine.delayLine_Ref_L(x_fin_L);
+        
+        outL = (1.0 - wetValue_) * inL + wetValue_ * ((1 - multitapDelay_) * delayOutL + (1 - sync) * multitapDelay_ * multitapOutL + sync * multitapDelay_ * syncOutL);
+                                                      
+        //outL = (1.0 - wetValue_) * inL + wetValue_ * ((1 - multitapDelay_) * delayOutL + multitapDelay_ * multitapOutL);
             
-            outL = inL * (1.0 - wetValue_) + wetValue_ * (interpolatedGain_L * mDelayLine.delayLine_L(xL) + interpolatedGainRef_L * mDelayLine.delayLine_Ref_L(x_fin_L));
-    
-    
-            outR = inR * (1.0 - wetValue_) + wetValue_ * (interpolatedGain_R * mDelayLine.delayLine_R(xR) + interpolatedGainRef_R * mDelayLine.delayLine_Ref_R(x_fin_R));
-    
-        }else{
-                
-            outL = inL * (1.0 - wetValue_) + wetValue_ * (interpolatedGain_L * mDelayLine.delayLineRep_L(xL, tempoInSamples_L, currentFeedback) + interpolatedGainRef_L * mDelayLine.delayLineRep_Ref_L(x_fin_L, tempoInSamples_L, currentFeedback));
-                
-                
-            outR = inR * (1.0 - wetValue_) + wetValue_ * (interpolatedGain_R * mDelayLine.delayLineRep_R(xR, tempoInSamples_R, currentFeedback) + interpolatedGainRef_R * mDelayLine.delayLineRep_Ref_R(x_fin_R, tempoInSamples_R, currentFeedback));
-                
-            }
-            
-        //outL = inL * (1.0 - wetValue_) + wetValue_ * ((1-multitapDelay_) * (interpolatedGain_L * mDelayLine.delayLine_L(xL) + interpolatedGainRef_L * mDelayLine.delayLine_Ref_L(x_fin_L)) + multitapDelay_ * (interpolatedGain_L * (mDelayLine.delayLineRep_L(xL, tempoInSamples_L, currentFeedback)) + interpolatedGainRef_L * (mDelayLine.delayLineRep_Ref_L(x_fin_L, tempoInSamples_L, currentFeedback))));
-            
-            
-        //outR = inR * (1.0 - wetValue_) + wetValue_ * ((1-multitapDelay_) * (interpolatedGain_R * mDelayLine.delayLine_R(xR) + interpolatedGainRef_R * mDelayLine.delayLine_Ref_R(x_fin_R)) + multitapDelay_ * (interpolatedGain_R * (mDelayLine.delayLineRep_R(xR, tempoInSamples_R, currentFeedback)) + interpolatedGainRef_R * (mDelayLine.delayLineRep_Ref_R(x_fin_R, tempoInSamples_R, currentFeedback))));
+        double multitapOutR = interpolatedGain_R * (mDelayLine.delayLineRep_R(xR, interpolatedDelaySamples_R, currentFeedback)) + interpolatedGainRef_R * (mDelayLine.delayLineRep_Ref_R(x_fin_R, interpolatedDelaySamplesRef_R, currentFeedback));
+        
+        double syncOutR = interpolatedGain_R * (mDelayLine.delayLineRep_R(xR, tempoInSample_R, currentFeedback)) + interpolatedGainRef_R * (mDelayLine.delayLineRep_Ref_R(x_fin_R, tempoInSample_R, currentFeedback));
+        
+        double delayOutR = interpolatedGain_R  * mDelayLine.delayLine_R(xR) + interpolatedGainRef_R * mDelayLine.delayLine_Ref_R(x_fin_R);
+        
+        outR = (1.0 - wetValue_) * inR + wetValue_ * ((1 - multitapDelay_) * delayOutR + (1 - sync) * multitapDelay_ * multitapOutR + sync * multitapDelay_ * syncOutR);
+        
  
+        //outR = (1.0 - wetValue_) * inR + wetValue_ * ((1 - multitapDelay_) * delayOutR + multitapDelay_ * multitapOutR);
+        
         channelDataL[i] = outL;
         channelDataR[i] = outR;
     
@@ -391,9 +367,8 @@ void VirtualTubeDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, M
         
         interpolatedDelaySamplesRef_L += incrementDelaySamplesRef_L;
         interpolatedDelaySamplesRef_R += incrementDelaySamplesRef_R;
-        
-    }
 
+    }
 
     for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
     {

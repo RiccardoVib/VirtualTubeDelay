@@ -82,7 +82,6 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     tubeLengthLeftSlider_.setPopupDisplayEnabled(true, false, this);
     tubeLengthLeftSlider_.setTextValueSuffix(" m");
     tubeLengthLeftSlider_.setDoubleClickReturnValue(true, 10.0);
-    //tubeLengthLeftSlider_.setChangeNotificationOnlyOnRelease(true);
     addAndMakeVisible (&tubeLengthLeftSlider_);
     tubeLengthLeftSlider_.addListener(this);
     
@@ -92,7 +91,6 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     tubeLengthRightSlider_.setPopupDisplayEnabled (true, false, this);
     tubeLengthRightSlider_.setTextValueSuffix(" m");
     tubeLengthRightSlider_.setDoubleClickReturnValue(true, 10.0);
-    //tubeLengthRightSlider_.setChangeNotificationOnlyOnRelease(true);
     addAndMakeVisible (&tubeLengthRightSlider_);
     tubeLengthRightSlider_.addListener(this);
     
@@ -137,7 +135,6 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     tubeEndLeftSlider_.setPopupDisplayEnabled(true, false, this);
     tubeEndLeftSlider_.setTextValueSuffix(" m");
     tubeEndLeftSlider_.setDoubleClickReturnValue(true, 10.0);
-    //tubeEndLeftSlider_.setChangeNotificationOnlyOnRelease(true);
     addAndMakeVisible (&tubeEndLeftSlider_);
     tubeEndLeftSlider_.addListener(this);
     
@@ -147,7 +144,6 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     tubeEndRightSlider_.setPopupDisplayEnabled (true, false, this);
     tubeEndRightSlider_.setTextValueSuffix(" m");
     tubeEndRightSlider_.setDoubleClickReturnValue(true, 10.0);
-    //tubeEndRightSlider_.setChangeNotificationOnlyOnRelease(true);
     addAndMakeVisible (&tubeEndRightSlider_);
     tubeEndRightSlider_.addListener(this);
     
@@ -210,13 +206,13 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     addAndMakeVisible (&feedbackSlider_);
     feedbackSlider_.addListener(this);
     
+    
     tempoSlider_.setSliderStyle(Slider:: RotaryHorizontalVerticalDrag);
-    tempoSlider_.setRange (1, 32, 1);
+    tempoSlider_.setRange (2, 32, 2);
     tempoSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     tempoSlider_.setPopupDisplayEnabled (false, false, this);
     tempoSlider_.setTextValueSuffix(" ");
-    tempoSlider_.setChangeNotificationOnlyOnRelease(true);
-    tempoSlider_.setDoubleClickReturnValue(true, 1);
+    tempoSlider_.setDoubleClickReturnValue(true, 2);
     addAndMakeVisible (&tempoSlider_);
     tempoSlider_.setVisible(false);
     tempoSlider_.addListener(this);
@@ -247,7 +243,6 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
 
 VirtualTubeDelayAudioProcessorEditor::~VirtualTubeDelayAudioProcessorEditor()
 {
-    //delete tubeLengthRightAttachment, tubeLengthLeftAttachment, gainLeftAttachment, gainRightAttachment, tubeSizeAttachment, dryWetMixAttachment, tubeLengthRefLeftAttachment, tubeLengthRefRightAttachment, gainRefLeftAttachment, gainRefRightAttachment, feedbackAttachment, tempoAttachment, multitapAttachment, syncAttachment;
 }
 
 void VirtualTubeDelayAudioProcessorEditor::buttonClicked (Button* button)
@@ -284,8 +279,6 @@ void VirtualTubeDelayAudioProcessorEditor::buttonClicked (Button* button)
             tempoText_.setText(createTextForTempo(*processor.tempo_));
             
             *processor.tempo_= tempoSlider_.getValue();
-            processor.tempoInSamples_L = processor.beatLenghtInSamples/ *processor.tempo_;
-            processor.tempoInSamples_R = processor.beatLenghtInSamples/ *processor.tempo_;
             
         }else{
             
@@ -393,9 +386,6 @@ void VirtualTubeDelayAudioProcessorEditor::sliderValueChanged (Slider* slider)
     else if (slider == &tempoSlider_)
     {
         *processor.tempo_ = tempoSlider_.getValue();
-        
-        processor.tempoInSamples_L = processor.beatLenghtInSamples/ *processor.tempo_;
-        processor.tempoInSamples_R = processor.beatLenghtInSamples/ *processor.tempo_;
         
         std::string tempoText = createTextForTempo(*processor.tempo_);
         tempoText_.setText(tempoText);

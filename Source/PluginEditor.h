@@ -31,7 +31,7 @@ public:
     void sliderValueChanged (Slider*) override;
     void buttonClicked (Button* button) override;
     
-    inline std::string createTextForDelays(double value){
+    inline std::string createTextForDelays(float value){
         
         std::string valueText = std::to_string(value);
         valueText.erase(5);
@@ -39,7 +39,7 @@ public:
         return valueText;
     }
     
-    inline std::string createTextForTempo(double value){
+    inline std::string createTextForTempo(float value){
     
         int eraseNumber;
     
@@ -73,21 +73,21 @@ private:
     TextEditor delayMsL_, delayMsR_, delayMsRefL_, delayMsRefR_, gainText_, gainRefText_, tubeLengthText_, tubeEndText_, tempoText_;
     
     
-    SliderAttachment* tubeLengthLeftAttachment;
-    SliderAttachment* tubeLengthRightAttachment;
-    SliderAttachment* gainLeftAttachment;
-    SliderAttachment* gainRightAttachment;
-    SliderAttachment* tubeSizeAttachment;
-    SliderAttachment* dryWetMixAttachment;
-    SliderAttachment* tubeEndLeftAttachment;
-    SliderAttachment* tubeEndRightAttachment;
-    SliderAttachment* gainRefLeftAttachment;
-    SliderAttachment* gainRefRightAttachment;
-    SliderAttachment* feedbackAttachment;
-    SliderAttachment* tempoAttachment;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> tubeLengthLeftAttachment;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> tubeLengthRightAttachment;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> gainLeftAttachment;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> gainRightAttachment;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> tubeSizeAttachment;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> dryWetMixAttachment;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> tubeEndLeftAttachment;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> tubeEndRightAttachment;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> gainRefLeftAttachment;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> gainRefRightAttachment;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> feedbackAttachment;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> tempoAttachment;
     
-    ButtonAttachment* multitapAttachment;
-    ButtonAttachment* syncAttachment;
+    ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> multitapAttachment;
+    ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> syncAttachment;
         
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VirtualTubeDelayAudioProcessorEditor)
 };

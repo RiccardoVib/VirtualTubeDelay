@@ -98,9 +98,6 @@ public:
     float tempoBpm_;
     float beatLenghtInSec;
     float beatLenghtInSamples;
-    float tempoInSamples_L;
-    float tempoInSamples_R;
-
     
     int rad;
     float leng_L;
@@ -135,6 +132,9 @@ public:
     void applyFilterDelay_R(int numSamples);
     
 private:
+    
+    float tempoInSample_L;
+    float tempoInSample_R;
     
     float currentGain_L;
     float currentGain_R;
@@ -194,6 +194,8 @@ private:
     float interpolatedTubeEnd_R;
     float incrementTubeEnd_R;
 
+    float delayGain_L;
+    float incrementDelayGain_L;
     
     int ptr;
     int ptr2;

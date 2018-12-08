@@ -4,11 +4,6 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>VirtualTubeDelay - AU.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>2</integer>
-		</dict>
 		<key>VirtualTubeDelay - All.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -17,14 +12,9 @@
 		<key>VirtualTubeDelay - Shared Code.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>4</integer>
+			<integer>2</integer>
 		</dict>
-		<key>VirtualTubeDelay - Standalone Plugin.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>3</integer>
-		</dict>
-		<key>VirtualTubeDelay - VST3.xcscheme</key>
+		<key>VirtualTubeDelay - VST.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>1</integer>
@@ -32,27 +22,17 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>3D9E25A2D756861017783E7A</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>563CADE0CC564CCD8FB00E48</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>9368F96DEB83D60FB62B8E3E</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>A94AA6C344D6C6689858E47A</key>
+		<key>B7EA4BC1C4A90379E7EC960B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>B7EA4BC1C4A90379E7EC960B</key>
+		<key>F88C7F11F82CF6527A60690A</key>
 		<dict>
 			<key>primary</key>
 			<true/>
