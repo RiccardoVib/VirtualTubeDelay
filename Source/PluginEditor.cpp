@@ -57,19 +57,19 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     addAndMakeVisible(&tubeEndText_);
     
     delayMsL_.setReadOnly(true);
-    delayMsL_.setText(createTextForDelays(processor.delayMilli_L));
+    delayMsL_.setText(createTextForDelays(processor.delayMilli[0]));
     addAndMakeVisible (&delayMsL_);
     
     delayMsR_.setReadOnly(true);
-    delayMsR_.setText(createTextForDelays(processor.delayMilli_R));
+    delayMsR_.setText(createTextForDelays(processor.delayMilli[1]));
     addAndMakeVisible (&delayMsR_);
     
     delayMsRefL_.setReadOnly(true);
-    delayMsRefL_.setText(createTextForDelays(processor.delayMilliRef_L));
+    delayMsRefL_.setText(createTextForDelays(processor.delayMilliRef[0]));
     addAndMakeVisible (&delayMsRefL_);
     
     delayMsRefR_.setReadOnly(true);
-    delayMsRefR_.setText(createTextForDelays(processor.delayMilliRef_L));
+    delayMsRefR_.setText(createTextForDelays(processor.delayMilliRef[1]));
     addAndMakeVisible (&delayMsRefR_);
     
     tempoText_.setReadOnly(true);
@@ -77,38 +77,38 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     tempoText_.setVisible(false);
     
     tubeLengthLeftSlider_.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    tubeLengthLeftSlider_.setRange (2.0, 30.0, 0.01);
+    tubeLengthLeftSlider_.setRange (2.0f, 30.0f, 0.01f);
     tubeLengthLeftSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     tubeLengthLeftSlider_.setPopupDisplayEnabled(true, false, this);
     tubeLengthLeftSlider_.setTextValueSuffix(" m");
-    tubeLengthLeftSlider_.setDoubleClickReturnValue(true, 10.0);
+    tubeLengthLeftSlider_.setDoubleClickReturnValue(true, 10.0f);
     addAndMakeVisible (&tubeLengthLeftSlider_);
     tubeLengthLeftSlider_.addListener(this);
     
     tubeLengthRightSlider_.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    tubeLengthRightSlider_.setRange (2.0, 30.0, 0.01);
+    tubeLengthRightSlider_.setRange (2.0f, 30.0f, 0.01f);
     tubeLengthRightSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     tubeLengthRightSlider_.setPopupDisplayEnabled (true, false, this);
     tubeLengthRightSlider_.setTextValueSuffix(" m");
-    tubeLengthRightSlider_.setDoubleClickReturnValue(true, 10.0);
+    tubeLengthRightSlider_.setDoubleClickReturnValue(true, 10.0f);
     addAndMakeVisible (&tubeLengthRightSlider_);
     tubeLengthRightSlider_.addListener(this);
     
     gainLeftSlider_.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    gainLeftSlider_.setRange (0.0, 9.0, 0.01);
+    gainLeftSlider_.setRange (0.0f, 9.0f, 0.01f);
     gainLeftSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     gainLeftSlider_.setPopupDisplayEnabled (true, false, this);
     gainLeftSlider_.setTextValueSuffix(" dB");
-    gainLeftSlider_.setDoubleClickReturnValue(true, 2.0);
+    gainLeftSlider_.setDoubleClickReturnValue(true, 2.0f);
     addAndMakeVisible (&gainLeftSlider_);
     gainLeftSlider_.addListener(this);
     
     gainRightSlider_.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    gainRightSlider_.setRange (0.0, 9.0, 0.01);
+    gainRightSlider_.setRange (0.0f, 9.0f, 0.01f);
     gainRightSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     gainRightSlider_.setPopupDisplayEnabled (true, false, this);
     gainRightSlider_.setTextValueSuffix(" dB");
-    gainRightSlider_.setDoubleClickReturnValue(true, 2.0);
+    gainRightSlider_.setDoubleClickReturnValue(true, 2.0f);
     addAndMakeVisible (&gainRightSlider_);
     gainRightSlider_.addListener(this);
     
@@ -122,46 +122,46 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     tubeSizeSlider_.addListener(this);
     
     dryWetMixSlider_.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    dryWetMixSlider_.setRange (0.0, 1.0, 0.01);
+    dryWetMixSlider_.setRange (0.0f, 1.0f, 0.01f);
     dryWetMixSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     dryWetMixSlider_.setPopupDisplayEnabled (true, false, this);
-    dryWetMixSlider_.setDoubleClickReturnValue(true, 0.0);
+    dryWetMixSlider_.setDoubleClickReturnValue(true, 0.0f);
     addAndMakeVisible (&dryWetMixSlider_);
     dryWetMixSlider_.addListener(this);
     
     tubeEndLeftSlider_.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    tubeEndLeftSlider_.setRange (1.0, 5.0, 0.01);
+    tubeEndLeftSlider_.setRange (1.0f, 5.0f, 0.01f);
     tubeEndLeftSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     tubeEndLeftSlider_.setPopupDisplayEnabled(true, false, this);
     tubeEndLeftSlider_.setTextValueSuffix(" m");
-    tubeEndLeftSlider_.setDoubleClickReturnValue(true, 10.0);
+    tubeEndLeftSlider_.setDoubleClickReturnValue(true, 10.0f);
     addAndMakeVisible (&tubeEndLeftSlider_);
     tubeEndLeftSlider_.addListener(this);
     
     tubeEndRightSlider_.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    tubeEndRightSlider_.setRange (1.0, 5.0, 0.01);
+    tubeEndRightSlider_.setRange (1.0f, 5.0f, 0.01f);
     tubeEndRightSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     tubeEndRightSlider_.setPopupDisplayEnabled (true, false, this);
     tubeEndRightSlider_.setTextValueSuffix(" m");
-    tubeEndRightSlider_.setDoubleClickReturnValue(true, 10.0);
+    tubeEndRightSlider_.setDoubleClickReturnValue(true, 10.0f);
     addAndMakeVisible (&tubeEndRightSlider_);
     tubeEndRightSlider_.addListener(this);
     
     gainRefLeftSlider_.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    gainRefLeftSlider_.setRange (0.0, 18.0, 0.01);
+    gainRefLeftSlider_.setRange (0.0f, 18.0f, 0.01f);
     gainRefLeftSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     gainRefLeftSlider_.setPopupDisplayEnabled (true, false, this);
     gainRefLeftSlider_.setTextValueSuffix(" dB");
-    gainRefLeftSlider_.setDoubleClickReturnValue(true, 4.0);
+    gainRefLeftSlider_.setDoubleClickReturnValue(true, 4.0f);
     addAndMakeVisible (&gainRefLeftSlider_);
     gainRefLeftSlider_.addListener(this);
     
     gainRefRightSlider_.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    gainRefRightSlider_.setRange (0.0, 18.0, 0.01);
+    gainRefRightSlider_.setRange (0.0f, 18.0f, 0.01f);
     gainRefRightSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     gainRefRightSlider_.setPopupDisplayEnabled (true, false, this);
     gainRefRightSlider_.setTextValueSuffix(" dB");
-    gainRefRightSlider_.setDoubleClickReturnValue(true, 4.0);
+    gainRefRightSlider_.setDoubleClickReturnValue(true, 4.0f);
     addAndMakeVisible (&gainRefRightSlider_);
     gainRefRightSlider_.addListener(this);
     
@@ -198,11 +198,11 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     //multitap
     
     feedbackSlider_.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    feedbackSlider_.setRange (0.1, 0.9, 0.01);
+    feedbackSlider_.setRange (0.1f, 0.9f, 0.01f);
     feedbackSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     feedbackSlider_.setPopupDisplayEnabled (true, false, this);
     feedbackSlider_.setTextValueSuffix(" ");
-    feedbackSlider_.setDoubleClickReturnValue(true, 0.1);
+    feedbackSlider_.setDoubleClickReturnValue(true, 0.1f);
     addAndMakeVisible (&feedbackSlider_);
     feedbackSlider_.addListener(this);
     
@@ -254,14 +254,10 @@ void VirtualTubeDelayAudioProcessorEditor::buttonClicked (Button* button)
         
         if(*processor.multitap_){
             
-            processor.multitapDelay_ = 1;
-            
             multitapDelayToggleButton_.setButtonText("On");
            
         }else{
-            
-            processor.multitapDelay_ = 0;
-            
+                        
             multitapDelayToggleButton_.setButtonText("Off");
             
         }
@@ -300,16 +296,16 @@ void VirtualTubeDelayAudioProcessorEditor::sliderValueChanged (Slider* slider)
     {
         *processor.tubeLengthLeft_ = tubeLengthLeftSlider_.getValue();
         
-        processor.leng_L = processor.mFilter.setLengt(*processor.tubeLengthLeft_);
-        processor.delayMilli_L = processor.mFilter.setDelayMilliseconds(processor.leng_L);
+        processor.leng[0] = processor.mFilter[0].setLengt(*processor.tubeLengthLeft_);
+        processor.delayMilli[0] = processor.mFilter[0].setDelayMilliseconds(processor.leng[0]);
         
-        std::string delayText = createTextForDelays(processor.delayMilli_L);
+        std::string delayText = createTextForDelays(processor.delayMilli[0]);
         delayMsL_.setText(delayText);
         
-        processor.lengRef_L = processor.leng_L + processor.mFilter.setLengt(*processor.tubeEndLeft_);
-        processor.delayMilliRef_L = processor.mFilter.setDelayMilliseconds(processor.lengRef_L);
+        processor.lengRef[0] = processor.leng[0] + processor.mFilter[0].setLengt(*processor.tubeEndLeft_);
+        processor.delayMilliRef[0] = processor.mFilter[0].setDelayMilliseconds(processor.lengRef[0]);
         
-        std::string delayTextRef = createTextForDelays(processor.delayMilliRef_L);
+        std::string delayTextRef = createTextForDelays(processor.delayMilliRef[0]);
         delayMsRefL_.setText(delayTextRef);
        
     }
@@ -317,16 +313,16 @@ void VirtualTubeDelayAudioProcessorEditor::sliderValueChanged (Slider* slider)
     {
         *processor.tubeLengthRight_ = tubeLengthRightSlider_.getValue();
         
-        processor.leng_R = processor.mFilter.setLengt(*processor.tubeLengthRight_);
-        processor.delayMilli_R = processor.mFilter.setDelayMilliseconds(processor.leng_R);
+        processor.leng[1] = processor.mFilter[1].setLengt(*processor.tubeLengthRight_);
+        processor.delayMilli[1] = processor.mFilter[1].setDelayMilliseconds(processor.leng[1]);
         
-        std::string delayText = createTextForDelays(processor.delayMilli_R);
+        std::string delayText = createTextForDelays(processor.delayMilli[1]);
         delayMsR_.setText(delayText);
         
-        processor.lengRef_R = processor.leng_R + processor.mFilter.setLengt(*processor.tubeEndRight_);
-        processor.delayMilliRef_R = processor.mFilter.setDelayMilliseconds(processor.lengRef_R);
+        processor.lengRef[1] = processor.leng[1] + processor.mFilter[1].setLengt(*processor.tubeEndRight_);
+        processor.delayMilliRef[1] = processor.mFilter[1].setDelayMilliseconds(processor.lengRef[1]);
         
-        std::string delayTextRef = createTextForDelays(processor.delayMilliRef_R);
+        std::string delayTextRef = createTextForDelays(processor.delayMilliRef[1]);
         delayMsRefR_.setText(delayTextRef);
         
     }
@@ -353,10 +349,10 @@ void VirtualTubeDelayAudioProcessorEditor::sliderValueChanged (Slider* slider)
     {
         *processor.tubeEndLeft_ = tubeEndLeftSlider_.getValue();
         
-        processor.lengRef_L = processor.leng_L + processor.mFilter.setLengt(*processor.tubeEndLeft_);
-        processor.delayMilliRef_L = processor.mFilter.setDelayMilliseconds(processor.lengRef_L);
+        processor.lengRef[0] = processor.leng[0] + processor.mFilter_ref[0].setLengt(*processor.tubeEndLeft_);
+        processor.delayMilliRef[0] = processor.mFilter_ref[0].setDelayMilliseconds(processor.lengRef[0]);
         
-        std::string delayText = createTextForDelays(processor.delayMilliRef_L);
+        std::string delayText = createTextForDelays(processor.delayMilliRef[0]);
         delayMsRefL_.setText(delayText);
         
     }
@@ -364,10 +360,10 @@ void VirtualTubeDelayAudioProcessorEditor::sliderValueChanged (Slider* slider)
     {
         *processor.tubeEndRight_ = tubeEndRightSlider_.getValue();
         
-        processor.lengRef_R = processor.leng_R + processor.mFilter.setLengt(*processor.tubeEndRight_);
-        processor.delayMilliRef_R = processor.mFilter.setDelayMilliseconds(processor.lengRef_R);
+        processor.lengRef[1] = processor.leng[1] + processor.mFilter_ref[1].setLengt(*processor.tubeEndRight_);
+        processor.delayMilliRef[1] = processor.mFilter_ref[1].setDelayMilliseconds(processor.lengRef[1]);
         
-        std::string delayText = createTextForDelays(processor.delayMilliRef_R);
+        std::string delayText = createTextForDelays(processor.delayMilliRef[1]);
         delayMsRefR_.setText(delayText);
         
     }

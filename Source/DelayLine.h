@@ -26,71 +26,51 @@ class DelayLine {
 public:
     
     DelayLine():
-    fracDelaySamplesLeft(0.0),
-    fracDelaySamplesRight(0.0),
-    fracDelaySamplesLeft_Ref(0.0),
-    fracDelaySamplesRight_Ref(0.0){initialize();};
+    fracDelaySamples{0.0, 0.0}
+    {initialize();};
     
     ~DelayLine(){
         
-        delete delayBufferLeft_;
-        delete delayBufferRight_;
-        
-        delete delayBufferLeftRef_;
-        delete delayBufferRightRef_;
+        for(int i = 0; i < 2; ++i)
+        {
+            delete delayBuffer[i];
+        }
     
     };
     
     void initialize(){
         
         delayBufferLength_ = 8*mSampleRate;//3835;//(int)(30/0.345)*44.1 + 1;
-        delayBufferLengthRef_ = 8*mSampleRate;//5114;//(int)(40/0.345)*44.1 + 1;
         
-        delayBufferLeft_ = new double[delayBufferLength_];
-        delayBufferRight_ = new double[delayBufferLength_];
+        for(int i = 0; i < 2; ++i)
+        {
+            delayBuffer[i] = new double[delayBufferLength_];
         
-        delayBufferLeftRef_ = new double[delayBufferLengthRef_];
-        delayBufferRightRef_ = new double[delayBufferLengthRef_];
+            rptr[i] = delayBuffer[i]; // read ptr
+            wptr[i] = delayBuffer[i]; // write ptr
         
-        rptrLeft = delayBufferLeft_; // read ptr
-        wptrLeft = delayBufferLeft_; // write ptr
-        
-        rptrRight = delayBufferRight_; // read ptr
-        wptrRight = delayBufferRight_; // write ptr
-        
-        rptrLeft_Ref = delayBufferLeftRef_;
-        rptrRight_Ref = delayBufferRightRef_;
-        
-        wptrLeft_Ref = delayBufferLeftRef_;
-        wptrRight_Ref = delayBufferRightRef_;
+            delayMultitapBuffer[i] = new double[delayBufferLength_];
+            
+            rptrMul[i] = delayMultitapBuffer[i]; // read ptr
+            wptrMul[i] = delayMultitapBuffer[i]; // write ptr
+        }
         
     }
     
-    void setDelay_L(double samples);
-    void setDelay_R(double samples);
+    void setDelay(double samples, int channel);
     
-    double delayLine_L(double input);
-    double delayLine_R(double input);
+    double delayLine(double input, int channel);
     
-    double delayLineRep_L(double input, double tempoDelay, double feedback);
-    double delayLineRep_R(double input, double tempoDelay, double feedback);
-    
-    void setDelay_Ref_L(double samples);
-    void setDelay_Ref_R(double samples);
-    
-    double delayLine_Ref_L(double input);
-    double delayLine_Ref_R(double input);
-    
-    double delayLineRep_Ref_L(double input, double tempoDelay, double feedback);
-    double delayLineRep_Ref_R(double input, double tempoDelay, double feedback);
+    double delayLineRep(double input, double tempoDelay, double feedback, int channel);
     
     void setSampleRate(double sampleRate){ mSampleRate = sampleRate;}
     
     // flush buffers
     inline void suspend(){
-        
-        memset(delayBufferLeft_, 0, delayBufferLength_*sizeof(double));
-        memset(delayBufferRight_, 0, delayBufferLength_*sizeof(double));
+        for(int i = 0; i < 2; ++i)
+        {
+            memset(delayBuffer[i], 0, delayBufferLength_*sizeof(double));
+        }
     }
     
     inline double hermiteInterpolation(double* pointer, double* buffer, int bufferLenght, double frac){
@@ -119,32 +99,18 @@ public:
 private:
     
     double mSampleRate;
-    double fracDelaySamplesLeft;
-    double fracDelaySamplesRight;
-    double fracDelaySamplesLeft_Ref;
-    double fracDelaySamplesRight_Ref;
+    double fracDelaySamples[2];
     
     int delayBufferLength_;
-    int delayBufferLengthRef_;
     
-    double *delayBufferLeft_;
-    double *delayBufferRight_;
+    double *delayBuffer[2];
+    double *delayMultitapBuffer[2];
     
-    double *delayBufferLeftRef_;
-    double *delayBufferRightRef_;
+    double *rptr[2]; // read ptr
+    double *wptr[2]; // write ptr
     
-    double *rptrLeft; // read ptr
-    double *wptrLeft; // write ptr
-    
-    double *rptrRight; // read ptr
-    double *wptrRight; // write ptr
-    
-    double *rptrLeft_Ref;
-    double *rptrRight_Ref;
-    
-    double *wptrLeft_Ref;
-    double *wptrRight_Ref;
-
+    double *rptrMul[2]; // read ptr
+    double *wptrMul[2]; // write ptr
 
 };
 #endif /* DelayLine_hpp */

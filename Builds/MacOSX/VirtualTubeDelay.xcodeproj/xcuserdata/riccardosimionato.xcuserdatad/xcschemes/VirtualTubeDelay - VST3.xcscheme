@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F88C7F11F82CF6527A60690A"
-               BuildableName = "VirtualTubeDelay.vst"
-               BlueprintName = "VirtualTubeDelay - VST"
+               BlueprintIdentifier = "563CADE0CC564CCD8FB00E48"
+               BuildableName = "VirtualTubeDelay.vst3"
+               BlueprintName = "VirtualTubeDelay - VST3"
                ReferencedContainer = "container:VirtualTubeDelay.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,23 +44,18 @@
       allowLocationSimulation = "YES">
       <PathRunnable
          runnableDebuggingMode = "0"
-         FilePath = "/Users/riccardosimionato/Desktop/Ableton Live 9 Suite.app">
+         BundleIdentifier = "com.cockos.reaper"
+         FilePath = "/Applications/REAPER64.app">
       </PathRunnable>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F88C7F11F82CF6527A60690A"
-            BuildableName = "VirtualTubeDelay.vst"
-            BlueprintName = "VirtualTubeDelay - VST"
+            BlueprintIdentifier = "563CADE0CC564CCD8FB00E48"
+            BuildableName = "VirtualTubeDelay.vst3"
+            BlueprintName = "VirtualTubeDelay - VST3"
             ReferencedContainer = "container:VirtualTubeDelay.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = ""
-            isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -73,9 +68,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F88C7F11F82CF6527A60690A"
-            BuildableName = "VirtualTubeDelay.vst"
-            BlueprintName = "VirtualTubeDelay - VST"
+            BlueprintIdentifier = "563CADE0CC564CCD8FB00E48"
+            BuildableName = "VirtualTubeDelay.vst3"
+            BlueprintName = "VirtualTubeDelay - VST3"
             ReferencedContainer = "container:VirtualTubeDelay.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

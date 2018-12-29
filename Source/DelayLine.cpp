@@ -10,212 +10,59 @@
 #include <iostream>
 #include <math.h>
 
-void DelayLine::setDelay_L(double samples){
+void DelayLine::setDelay(double samples, int channel)
+{
     
-    rptrLeft = wptrLeft - (long)samples;
-    while (rptrLeft < delayBufferLeft_) { rptrLeft += delayBufferLength_; }
+    rptr[channel] = wptr[channel] - (long)samples;
+    while (rptr[channel] < delayBuffer[channel]) { rptr[channel] += delayBufferLength_; }
     
-    fracDelaySamplesLeft = samples - (long)samples;
+    fracDelaySamples[channel] = samples - (long)samples;
     
 }
 
-void DelayLine::setDelay_R(double samples){
-    
-    rptrRight = wptrRight - (long)samples;
-    while (rptrRight < delayBufferRight_) { rptrRight += delayBufferLength_; }
-    
-    fracDelaySamplesRight = samples - (long)samples;
 
-}
-
-void DelayLine::setDelay_Ref_L(double samples){
-    
-    rptrLeft_Ref = wptrLeft_Ref - (long)samples;
-    while (rptrLeft_Ref < delayBufferLeftRef_) { rptrLeft_Ref += delayBufferLengthRef_; }
-    
-    fracDelaySamplesLeft_Ref = samples - (long)samples;
-}
-
-void DelayLine::setDelay_Ref_R(double samples){
-    
-    rptrRight_Ref = wptrRight_Ref - (long)samples;
-    while (rptrRight_Ref < delayBufferRightRef_) { rptrRight_Ref += delayBufferLengthRef_; }
-
-    fracDelaySamplesRight_Ref = samples - (long)samples;
-}
-
-
-double DelayLine::delayLine_L(double x)
+double DelayLine::delayLine(double x, int channel)
 {
     
     double y;
-    y = hermiteInterpolation(rptrLeft, delayBufferLeft_, delayBufferLength_, fracDelaySamplesLeft);
+    y = hermiteInterpolation(rptr[channel], delayBuffer[channel], delayBufferLength_, fracDelaySamples[channel]);
     
-    rptrLeft += 1;
+    rptr[channel] += 1;
     
-    *wptrLeft++ = x;
+    *wptr[channel]++ = x;
     
-    if (rptrLeft - delayBufferLeft_ >= delayBufferLength_) { rptrLeft -= delayBufferLength_; }
-    if (wptrLeft - delayBufferLeft_ >= delayBufferLength_) { wptrLeft -= delayBufferLength_; }
-    
-    return y;
-}
-
-double DelayLine::delayLine_R(double x)
-{
-    
-    double y;
-    
-    y = hermiteInterpolation(rptrRight, delayBufferRight_, delayBufferLength_, fracDelaySamplesRight);
-    
-    rptrRight += 1;
-
-    *wptrRight++ = x;
-    
-    if (rptrRight - delayBufferRight_ >= delayBufferLength_) { rptrRight -= delayBufferLength_; }
-    if (wptrRight - delayBufferRight_ >= delayBufferLength_) { wptrRight -= delayBufferLength_; }
+    if (rptr[channel] - delayBuffer[channel] >= delayBufferLength_) { rptr[channel] -= delayBufferLength_; }
+    if (wptr[channel] - delayBuffer[channel] >= delayBufferLength_) { wptr[channel] -= delayBufferLength_; }
     
     return y;
 }
 
-
-
-double DelayLine::delayLine_Ref_L(double x)
+double DelayLine::delayLineRep(double x, double tempoDelay, double feedback, int channel)
 {
     
-    double y;
-    
-    y = hermiteInterpolation(rptrLeft_Ref, delayBufferLeftRef_, delayBufferLengthRef_, fracDelaySamplesLeft_Ref);
-    
-    *wptrLeft_Ref++ = x;
-    
-    rptrLeft_Ref += 1;
-    
-    if (rptrLeft_Ref - delayBufferLeftRef_ >= delayBufferLengthRef_) { rptrLeft_Ref -= delayBufferLengthRef_; }
-    if (wptrLeft_Ref - delayBufferLeftRef_ >= delayBufferLengthRef_) { wptrLeft_Ref -= delayBufferLengthRef_; }
-    
-    return y;
-
-}
-
-
-double DelayLine::delayLine_Ref_R(double x)
-{
-    
-    double y;
-    
-    y = hermiteInterpolation(rptrRight_Ref, delayBufferRightRef_, delayBufferLengthRef_, fracDelaySamplesRight_Ref);
-   
-    rptrRight_Ref += 1;
-    
-    *wptrRight_Ref++ = x;
-    
-    if (rptrRight_Ref - delayBufferRightRef_ >= delayBufferLengthRef_) { rptrRight_Ref -= delayBufferLengthRef_; }
-    if (wptrRight_Ref - delayBufferRightRef_ >= delayBufferLengthRef_) { wptrRight_Ref -= delayBufferLengthRef_; }
-    
-    return y;
-}
-
-double DelayLine::delayLineRep_L(double x, double tempoDelay, double feedback)
-{
+    rptrMul[channel] = wptrMul[channel] - (long)tempoDelay;
+    while (rptrMul[channel] < delayMultitapBuffer[channel]) { rptrMul[channel] += delayBufferLength_; }
     
     double y = 0.0;
-    int len = 8;
     
-    y = hermiteInterpolation(rptrLeft, delayBufferLeft_, delayBufferLength_, fracDelaySamplesLeft);
+    y = *rptrMul[channel] + hermiteInterpolation(rptr[channel], delayBuffer[channel], delayBufferLength_, fracDelaySamples[channel]);
+    
+    //H(z) = 1/(1 - az^-D)
+    //y(n) = ay(n - D) + x(n)
 
-    for(int i = 1; i < len; i++){
-        
-        double *y1 = rptrLeft - i*(int)tempoDelay;
-        while(y1 < delayBufferLeft_) { y1 += delayBufferLength_; }
-        
-        y = y + pow(feedback,i) * *y1;
-    }
+    rptrMul[channel] += 1;
     
-    rptrLeft += 1;
+    *wptrMul[channel]++ = feedback * y;
     
-    *wptrLeft++ = x;
+    if (rptrMul[channel] - delayMultitapBuffer[channel] >= delayBufferLength_) { rptrMul[channel] -= delayBufferLength_; }
+    if (wptrMul[channel] - delayMultitapBuffer[channel] >= delayBufferLength_) { wptrMul[channel] -= delayBufferLength_; }
     
-    if (rptrLeft - delayBufferLeft_ >= delayBufferLength_) { rptrLeft -= delayBufferLength_; }
-    if (wptrLeft - delayBufferLeft_ >= delayBufferLength_) { wptrLeft -= delayBufferLength_; }
+    rptr[channel] += 1;
     
-    return y;
-}
-
-
-double DelayLine::delayLineRep_R(double x, double tempoDelay, double feedback)
-{
-    double y = 0.0;
-    int len = 8;
+    *wptr[channel]++ = x;
     
-    y = hermiteInterpolation(rptrRight, delayBufferRight_, delayBufferLength_, fracDelaySamplesLeft);
-
-    for(int i = 1; i < len; i++){
-        double *y1 = rptrRight - i*(int)tempoDelay;
-        while(y1 < delayBufferRight_) { y1 += delayBufferLength_; }
-        
-        y = y + pow(feedback,i) * *y1;
-    }
+    if (rptr[channel] - delayBuffer[channel] >= delayBufferLength_) { rptr[channel] -= delayBufferLength_; }
+    if (wptr[channel] - delayBuffer[channel] >= delayBufferLength_) { wptr[channel] -= delayBufferLength_; }
     
-    rptrRight += 1;
-    
-    *wptrRight++ = x;
-    
-    if (rptrRight - delayBufferRight_ >= delayBufferLength_) { rptrRight -= delayBufferLength_; }
-    if (wptrRight - delayBufferRight_ >= delayBufferLength_) { wptrRight -= delayBufferLength_; }
-    
-    return y;
-}
-
-
-double DelayLine::delayLineRep_Ref_L(double x, double tempoDelay, double feedback)
-{
-    double y = 0.0;
-    int len = 8;
-    
-    y = hermiteInterpolation(rptrLeft_Ref, delayBufferLeftRef_, delayBufferLengthRef_, fracDelaySamplesLeft_Ref);
-
-    
-    for(int i = 1; i < len; i++){
-        
-        double *y1 = rptrLeft_Ref - i*(int)tempoDelay;
-        while(y1 < delayBufferLeftRef_) { y1 += delayBufferLengthRef_; }
-        
-        y = y + pow(feedback,i) * *y1;
-    }
-    
-    rptrLeft_Ref += 1;
-    
-    *wptrLeft_Ref++ = x;
-    
-    if (rptrLeft_Ref - delayBufferLeftRef_ >= delayBufferLengthRef_) { rptrLeft_Ref -= delayBufferLengthRef_; }
-    if (wptrLeft_Ref - delayBufferLeftRef_ >= delayBufferLengthRef_) { wptrLeft_Ref -= delayBufferLengthRef_; }
-    
-    return y;
-}
-
-
-double DelayLine::delayLineRep_Ref_R(double x, double tempoDelay, double feedback)
-{
-    double y = 0.0;
-    int len = 8;
-    
-    y = hermiteInterpolation(rptrRight_Ref, delayBufferRightRef_, delayBufferLengthRef_, fracDelaySamplesRight_Ref);
-
-    for(int i = 1; i < len; i++){
-        
-        double *y1 = rptrRight_Ref - i*(int)tempoDelay;
-        while(y1 < delayBufferRightRef_) { y1 += delayBufferLengthRef_; }
-        
-        y = y + pow(feedback,i) * *y1;
-    }
-    
-    rptrRight_Ref += 1;
-    
-    *wptrRight_Ref++ = x;
-    
-    if (rptrRight_Ref - delayBufferRightRef_ >= delayBufferLengthRef_) { rptrRight_Ref -= delayBufferLengthRef_; }
-    if (wptrRight_Ref - delayBufferRightRef_ >= delayBufferLengthRef_) { wptrRight_Ref -= delayBufferLengthRef_; }
- 
     return y;
 }
