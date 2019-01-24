@@ -8,8 +8,7 @@
   ==============================================================================
 */
 
-#ifndef Filter_hpp
-#define Filter_hpp
+#pragma once
 
 //#include <cmath>
 #include <math.h>
@@ -302,5 +301,3 @@ private:
     double mSampleRate;
 
 };
-
-#endif /* Filter_hpp */

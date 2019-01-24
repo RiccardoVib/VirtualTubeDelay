@@ -16,11 +16,11 @@
 //
 //
 
-#ifndef DelayLine_hpp
-#define DelayLine_hpp
+#pragma once
+
 #include <math.h>
 #include <tgmath.h>
-#include <vector>
+//#include <vector>
 
 class DelayLine {
 public:
@@ -34,6 +34,7 @@ public:
         for(int i = 0; i < 2; ++i)
         {
             delete delayBuffer[i];
+            delete delayMultitapBuffer[i];
         }
     
     };
@@ -53,6 +54,11 @@ public:
             
             rptrMul[i] = delayMultitapBuffer[i]; // read ptr
             wptrMul[i] = delayMultitapBuffer[i]; // write ptr
+            
+            delaySyncBuffer[i] = new double[delayBufferLength_];
+            
+            rptrSyn[i] = delaySyncBuffer[i]; // read ptr
+            wptrSyn[i] = delaySyncBuffer[i]; // write ptr
         }
         
     }
@@ -63,37 +69,20 @@ public:
     
     double delayLineRep(double input, double tempoDelay, double feedback, int channel);
     
-    void setSampleRate(double sampleRate){ mSampleRate = sampleRate;}
+    double delayLineRepSync(double input, double tempoDelay, double feedback, int channel);
+    
+    double hermiteInterpolation(double* pointer, double* buffer, int bufferLenght, double frac);
+    
+    inline void setSampleRate(double sampleRate){ mSampleRate = sampleRate;}
     
     // flush buffers
     inline void suspend(){
         for(int i = 0; i < 2; ++i)
         {
             memset(delayBuffer[i], 0, delayBufferLength_*sizeof(double));
+            memset(delayMultitapBuffer[i], 0, delayBufferLength_*sizeof(double));
+            memset(delaySyncBuffer[i], 0, delayBufferLength_*sizeof(double));
         }
-    }
-    
-    inline double hermiteInterpolation(double* pointer, double* buffer, int bufferLenght, double frac){
-    
-        // Hermite polynomial interpolation
-        // 4-point, 3rd-order Hermite (x-form)
-        static double c0, c1, c2, c3;
-        double y;
-        double *y_1 = (pointer - 1);
-        double *y_2 = (pointer - 2);
-        double *y_3 = (pointer - 3);
-    
-        if (y_1 < buffer) { y_1 += bufferLenght; }
-        if (y_2 < buffer) { y_2 += bufferLenght; }
-        if (y_3 < buffer) { y_3 += bufferLenght; }
-    
-        c0 = *y_1;
-        c1 = (1.0/2.0)*(*y_2 - *pointer);
-        c2 = (*pointer - (5.0/2.0)* *y_1) + (2.0* *y_2 - (1.0/2.0)* *y_3);
-        c3 = (1.0/2.0)*(*y_3- *pointer) + (3.0/2.0)*(*y_1 - *y_2);
-    
-        return y = ((c3*frac+c2)*frac+c1)*frac+c0;
-    
     }
     
 private:
@@ -105,12 +94,15 @@ private:
     
     double *delayBuffer[2];
     double *delayMultitapBuffer[2];
+    double *delaySyncBuffer[2];
     
     double *rptr[2]; // read ptr
     double *wptr[2]; // write ptr
     
     double *rptrMul[2]; // read ptr
     double *wptrMul[2]; // write ptr
+    
+    double *rptrSyn[2]; // read ptr
+    double *wptrSyn[2]; // write ptr
 
 };
-#endif /* DelayLine_hpp */

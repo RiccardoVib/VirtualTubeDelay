@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "563CADE0CC564CCD8FB00E48"
-               BuildableName = "VirtualTubeDelay.vst3"
-               BlueprintName = "VirtualTubeDelay - VST3"
+               BlueprintIdentifier = "F88C7F11F82CF6527A60690A"
+               BuildableName = "VirtualTubeDelay.vst"
+               BlueprintName = "VirtualTubeDelay - VST"
                ReferencedContainer = "container:VirtualTubeDelay.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -42,17 +42,12 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <PathRunnable
-         runnableDebuggingMode = "0"
-         BundleIdentifier = "com.cockos.reaper"
-         FilePath = "/Applications/REAPER64.app">
-      </PathRunnable>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "563CADE0CC564CCD8FB00E48"
-            BuildableName = "VirtualTubeDelay.vst3"
-            BlueprintName = "VirtualTubeDelay - VST3"
+            BlueprintIdentifier = "F88C7F11F82CF6527A60690A"
+            BuildableName = "VirtualTubeDelay.vst"
+            BlueprintName = "VirtualTubeDelay - VST"
             ReferencedContainer = "container:VirtualTubeDelay.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -68,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "563CADE0CC564CCD8FB00E48"
-            BuildableName = "VirtualTubeDelay.vst3"
-            BlueprintName = "VirtualTubeDelay - VST3"
+            BlueprintIdentifier = "F88C7F11F82CF6527A60690A"
+            BuildableName = "VirtualTubeDelay.vst"
+            BlueprintName = "VirtualTubeDelay - VST"
             ReferencedContainer = "container:VirtualTubeDelay.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

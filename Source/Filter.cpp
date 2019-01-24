@@ -83,31 +83,35 @@ void Filter::setValues(float tubeLength, double tubeSize) {
     
     //1st filter
     
+    double den1 = (1 + (sqrt(V1)*K1)/Q1 + V1*K1*K1);
+    
     K1 = tan(mPI*fc1/mSampleRate);
     
-    a1 = (2*(V1*K1*K1 - 1))/(1 + (sqrt(V1)*K1)/Q1 + V1*K1*K1);
+    a1 = (2*(V1*K1*K1 - 1))/ den1;
     
-    a2 = (1 - (sqrt(V1)*K1)/Q1 + V1*K1*K1)/(1 + (sqrt(V1)*K1)/Q1 + V1*K1*K1);
+    a2 = (1 - (sqrt(V1)*K1)/Q1 + V1*K1*K1)/ den1;
     
-    b0 = V1*(1 + (K1)/Q1 + K1*K1) / (1 + (sqrt(V1)*K1)/Q1 + V1*K1*K1);
+    b0 = V1*(1 + (K1)/Q1 + K1*K1) / den1;
     
-    b1 = (2*V1*(K1*K1 - 1)) / (1 + (sqrt(V1)*K1)/Q1 + V1*K1*K1);
+    b1 = (2*V1*(K1*K1 - 1)) / den1;
     
-    b2 = V1*(1 - (K1)/Q1 + K1*K1) / (1 + (sqrt(V1)*K1)/Q1 + V1*K1*K1);
+    b2 = V1*(1 - (K1)/Q1 + K1*K1) / den1;
     
     //2nd filter
     
+    double den2 = (1 + (sqrt(V2)*K2)/Q2 + V2*K2*K2);
+    
     K2 = tan(mPI*fc2/mSampleRate);
     
-    a11 = (2*(V2*K2*K2 - 1))/ (1 + (sqrt(V2)*K2)/Q2 + V2*K2*K2);
+    a11 = (2*(V2*K2*K2 - 1))/ den2;
     
-    a22 = (1 - (sqrt(V2)*K2)/Q2 + V2*K2*K2) / (1 + (sqrt(V2)*K2)/Q2 + V2*K2*K2);
+    a22 = (1 - (sqrt(V2)*K2)/Q2 + V2*K2*K2) / den2;
     
-    b00 =  V2*(1 + (K2)/Q2 + K2*K2) / (1 + (sqrt(V2)*K2)/Q2 + V2*K2*K2);
+    b00 =  V2*(1 + (K2)/Q2 + K2*K2) / den2;
     
-    b11 = (2*V2*(K2*K2 - 1)) / (1 + (sqrt(V2)*K2)/Q2 + V2*K2*K2);
+    b11 = (2*V2*(K2*K2 - 1)) / den2;
     
-    b22 = V2*(1 - (K2)/Q2 + K2*K2)/ (1 + (sqrt(V2)*K2)/Q2 + V2*K2*K2);
+    b22 = V2*(1 - (K2)/Q2 + K2*K2)/ den2;
     
     //LP filter
     if (lengt < 2){

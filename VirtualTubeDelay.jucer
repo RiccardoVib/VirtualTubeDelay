@@ -3,7 +3,7 @@
 <JUCERPROJECT id="TyoCIz" name="VirtualTubeDelay" projectType="audioplug" jucerVersion="5.3.2"
               pluginVST3Category="Delay,Filter,Stereo" pluginName="VirtualTubeDelay"
               pluginManufacturer="Accademia" pluginManufacturerCode="ACDM"
-              pluginFormats="buildVST3">
+              pluginFormats="buildVST">
   <MAINGROUP id="XoSo4V" name="VirtualTubeDelay">
     <GROUP id="{6B21D8EB-2C06-1F60-2E7A-7EA2C9762509}" name="Source">
       <FILE id="Vpf8v0" name="DelayLine.cpp" compile="1" resource="0" file="Source/DelayLine.cpp"/>

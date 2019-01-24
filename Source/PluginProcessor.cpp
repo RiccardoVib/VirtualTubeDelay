@@ -20,14 +20,14 @@ VirtualTubeDelayAudioProcessor::VirtualTubeDelayAudioProcessor()
     
     parameters.createAndAddParameter("tubeLengthLeft_", "tubeLengthLeft", "tubeLengthLeft", NormalisableRange<float>(2.0f,30.0f), 10.0f, nullptr, nullptr);
     parameters.createAndAddParameter("tubeLengthRight_", "tubeLengthRight", "tubeLengthRight", NormalisableRange<float>(2.0f,30.0f), 10.0f, nullptr, nullptr);
-    parameters.createAndAddParameter("gainLeft_", "gainLeft", "gainLeft", NormalisableRange<float>(0.0f,9.0f), 2.0f, nullptr, nullptr);
-    parameters.createAndAddParameter("gainRight_", "gainRight", "gainRight", NormalisableRange<float>(0.0f,9.0f), 2.0f, nullptr, nullptr);
+    parameters.createAndAddParameter("gainLeft_", "gainLeft", "gainLeft", NormalisableRange<float>(-128.0f,19.0f), 0.0f, nullptr, nullptr);
+    parameters.createAndAddParameter("gainRight_", "gainRight", "gainRight", NormalisableRange<float>(-128.0f,19.0f), 0.0f, nullptr, nullptr);
     parameters.createAndAddParameter("dryWetMix_", "dryWetMix", "dryWetMix", NormalisableRange<float>(0.0f, 1.0f), 0, nullptr, nullptr);
     parameters.createAndAddParameter("tubeSize_", "tubeSize", "tubeSize", NormalisableRange<float>(1.2,2.5), 1.2, nullptr, nullptr);
     parameters.createAndAddParameter("tubeEndLeft_", "tubeEndLeft", "tubeEndLeft", NormalisableRange<float>(1.0f,5.0f), 1.0f, nullptr, nullptr);
     parameters.createAndAddParameter("tubeEndRight_", "tubeEndRight", "tubeEndRight", NormalisableRange<float>(1.0f,5.0f), 1.0f, nullptr, nullptr);
-    parameters.createAndAddParameter("gainRefLeft_", "gainRefLeft", "gainRefLeft", NormalisableRange<float>(0.0f,18.0f), 4.0f, nullptr, nullptr);
-    parameters.createAndAddParameter("gainRefRight_", "gainRefRight", "gainRefRight", NormalisableRange<float>(0.0f,18.0f), 4.0f, nullptr, nullptr);
+    parameters.createAndAddParameter("gainRefLeft_", "gainRefLeft", "gainRefLeft", NormalisableRange<float>(-128.0f,25.0f), 0.0f, nullptr, nullptr);
+    parameters.createAndAddParameter("gainRefRight_", "gainRefRight", "gainRefRight", NormalisableRange<float>(-128.0f,25.0f), 0.0f, nullptr, nullptr);
     parameters.createAndAddParameter("feedback_", "feedback", "feedback", NormalisableRange<float>(0.1f,0.9f), 0.1f, nullptr, nullptr);
     parameters.createAndAddParameter("tempo_", "tempo", "tempo", NormalisableRange<float>(2,32), 2, nullptr, nullptr);
     parameters.createAndAddParameter("multitap_", "multitap", "multitap", NormalisableRange<float>(0,1), false, nullptr, nullptr, true);
@@ -142,8 +142,8 @@ void VirtualTubeDelayAudioProcessor::prepareToPlay (double sampleRate, int sampl
         delayMilliRef[channel] = 34.78260869565217f;
         previousDelaySamplesRef[channel] = delaySamplesRef[channel] = 1533.913043478260f;
         
-        previousGain[channel] = 2.0f;
-        previousGainRef[channel] = 1.0f;
+        previousGain[channel] = 0.0f;
+        previousGainRef[channel] = 0.0f;
         
         mDelayLine[channel].setSampleRate(getSampleRate());
         mFilter[channel].setSampleRate(getSampleRate());
@@ -174,7 +174,11 @@ void VirtualTubeDelayAudioProcessor::prepareToPlay (double sampleRate, int sampl
 }
 void VirtualTubeDelayAudioProcessor::releaseResources()
 {
-    
+    for(int channel = 0; channel < getTotalNumOutputChannels(); ++channel)
+    {
+        mDelayLine[channel].suspend();
+        mDelayLine_ref[channel].suspend();
+    }
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -216,18 +220,22 @@ void VirtualTubeDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, M
     }
     
     //storing parameters values
-    bool sync = *sync_;
+    int sync = 0;
+    if(*sync_){sync = 1;}
+   
+    int multitapDelay = 0;
+    if(*multitap_){multitapDelay = 1;}
+    
     float wetValue_ = *dryWetMix_;
     float currentFeedback = *feedback_;
     int tempo = *tempo_;
-    bool multitapDelay = *multitap_;
     
     rad = floor(*tubeSize_*10 - 12);
     
-    currentGain[0] = *gainLeft_;
-    currentGain[1] = *gainRight_;
-    currentGainRef[0] = *gainRefLeft_;
-    currentGainRef[1] = *gainRefRight_;
+    currentGain[0] = powf(10, *gainLeft_ / 20);
+    currentGain[1] = powf(10, *gainRight_ / 20);
+    currentGainRef[0] = powf(10, *gainRefLeft_ / 20);
+    currentGainRef[1] = powf(10, *gainRefRight_ / 20);
     
     applyGain(numSamples);
     
@@ -239,8 +247,8 @@ void VirtualTubeDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, M
     tempoBpm_ = currentPositionInfo.bpm;
     beatLenghtInSec = tempoBpm_/60;
     beatLenghtInSamples = beatLenghtInSec * getSampleRate();
-    tempoInSample[0] = 2 * beatLenghtInSamples/ tempo;
-    tempoInSample[1] = 2 * beatLenghtInSamples/ tempo;
+    tempoInSample[0] = beatLenghtInSamples/ tempo;
+    tempoInSample[1] = beatLenghtInSamples/ tempo;
     
     for (int channel = 0; channel < 2; ++channel)
     {
@@ -288,10 +296,10 @@ void VirtualTubeDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, M
             
             double multitapOut = interpolatedGain[channel] * (mDelayLine[channel].delayLineRep(x, interpolatedDelaySamples[channel], currentFeedback, channel)) + interpolatedGainRef[channel] * (mDelayLine_ref[channel].delayLineRep(x_fin, interpolatedDelaySamplesRef[channel], currentFeedback, channel));
         
-            double syncOut = interpolatedGain[channel] * (mDelayLine[channel].delayLineRep(x, tempoInSample[channel], currentFeedback, channel)) + interpolatedGainRef[channel] * (mDelayLine_ref[channel].delayLineRep(x_fin, tempoInSample[channel], currentFeedback, channel));
+            double syncOut = interpolatedGain[channel] * (mDelayLine[channel].delayLineRepSync(x, tempoInSample[channel], currentFeedback, channel)) + interpolatedGainRef[channel] * (mDelayLine_ref[channel].delayLineRepSync(x_fin, tempoInSample[channel], currentFeedback, channel));
         
             double delayOut = interpolatedGain[channel] * mDelayLine[channel].delayLine(x, channel) + interpolatedGainRef[channel] * mDelayLine_ref[channel].delayLine(x_fin, channel);
-        
+            
             out = (1.0 - wetValue_) * in + wetValue_ * ((1 - multitapDelay) * delayOut + (1 - sync) * multitapDelay * multitapOut + sync * multitapDelay * syncOut);
             
             channelData[i] = out;

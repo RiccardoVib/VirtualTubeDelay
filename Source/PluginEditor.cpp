@@ -95,20 +95,22 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     tubeLengthRightSlider_.addListener(this);
     
     gainLeftSlider_.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    gainLeftSlider_.setRange (0.0f, 9.0f, 0.01f);
+    gainLeftSlider_.setRange (-128.0f, 19.0f, 0.01f);
     gainLeftSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     gainLeftSlider_.setPopupDisplayEnabled (true, false, this);
     gainLeftSlider_.setTextValueSuffix(" dB");
-    gainLeftSlider_.setDoubleClickReturnValue(true, 2.0f);
+    gainLeftSlider_.setDoubleClickReturnValue(true, 0.0f);
+    gainLeftSlider_.setSkewFactorFromMidPoint(0.0f);
     addAndMakeVisible (&gainLeftSlider_);
     gainLeftSlider_.addListener(this);
     
     gainRightSlider_.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    gainRightSlider_.setRange (0.0f, 9.0f, 0.01f);
+    gainRightSlider_.setRange (-128.0f, 19.0f, 0.01f);
     gainRightSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     gainRightSlider_.setPopupDisplayEnabled (true, false, this);
     gainRightSlider_.setTextValueSuffix(" dB");
-    gainRightSlider_.setDoubleClickReturnValue(true, 2.0f);
+    gainRightSlider_.setDoubleClickReturnValue(true, 0.0f);
+    gainRightSlider_.setSkewFactorFromMidPoint(0.0f);
     addAndMakeVisible (&gainRightSlider_);
     gainRightSlider_.addListener(this);
     
@@ -148,20 +150,22 @@ VirtualTubeDelayAudioProcessorEditor::VirtualTubeDelayAudioProcessorEditor (Virt
     tubeEndRightSlider_.addListener(this);
     
     gainRefLeftSlider_.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    gainRefLeftSlider_.setRange (0.0f, 18.0f, 0.01f);
+    gainRefLeftSlider_.setRange (-128.0f, 25.0f, 0.01f);
     gainRefLeftSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     gainRefLeftSlider_.setPopupDisplayEnabled (true, false, this);
     gainRefLeftSlider_.setTextValueSuffix(" dB");
-    gainRefLeftSlider_.setDoubleClickReturnValue(true, 4.0f);
+    gainRefLeftSlider_.setDoubleClickReturnValue(true, 0.0f);
+    gainRefLeftSlider_.setSkewFactorFromMidPoint(0.0f);
     addAndMakeVisible (&gainRefLeftSlider_);
     gainRefLeftSlider_.addListener(this);
     
     gainRefRightSlider_.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    gainRefRightSlider_.setRange (0.0f, 18.0f, 0.01f);
+    gainRefRightSlider_.setRange (-128.0f, 25.0f, 0.01f);
     gainRefRightSlider_.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     gainRefRightSlider_.setPopupDisplayEnabled (true, false, this);
     gainRefRightSlider_.setTextValueSuffix(" dB");
-    gainRefRightSlider_.setDoubleClickReturnValue(true, 4.0f);
+    gainRefRightSlider_.setDoubleClickReturnValue(true, 0.0f);
+    gainRefRightSlider_.setSkewFactorFromMidPoint(0.0f);
     addAndMakeVisible (&gainRefRightSlider_);
     gainRefRightSlider_.addListener(this);
     
